@@ -94,6 +94,7 @@ function Unit(Type)
             this.moveX = 1;
             this.attackPlus = 1;
             this.attackX = 1;
+            this.buff =  0;
             break;
         case "Scout":
             this.dmg = 1;
@@ -102,6 +103,7 @@ function Unit(Type)
             this.moveX = 0;
             this.attackPlus = 0;
             this.attackX = 2;
+            this.buff = 0;
             break;
         case "Ranger":
             this.dmg = 1;
@@ -110,6 +112,7 @@ function Unit(Type)
             this.moveX = 2;
             this.attackPlus = 3;
             this.attackX = 3;
+            this.buff = 0;
             break;
         case "King":
             this.dmg = 3;
@@ -118,6 +121,19 @@ function Unit(Type)
             this.moveX = 1;
             this.attackPlus = 1;
             this.attackX = 1;
+            this.buff = 0;
+            break;
+        case "Rez":
+            this.buff = 1;
+            break;
+        case "Damage":
+            this.buff = 1;
+            break;
+        case "Speed":
+            this.buff = 1;
+            break;
+        case "Health":
+            this.buff = 1;
             break;
         default:
             this.dmg = 0;
@@ -126,6 +142,7 @@ function Unit(Type)
             this.moveX = 0;
             this.attackPlus = 0;
             this.attackX = 0;
+            this.buff = 0;
             break;
     }
 
