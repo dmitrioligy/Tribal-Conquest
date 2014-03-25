@@ -84,7 +84,6 @@ function Cell(Unit)
 function Unit(Type)
 {
     this.type = Type;
-    
     switch(Type)
     {
         case "Peasant":
@@ -145,5 +144,37 @@ function Unit(Type)
             this.buff = 0;
             break;
     }
+
+    this.Take_Damge = function(damage)
+    {
+        this.hp = this.hp - damage;
+    };
+
+    this.Gain_Buff = function(Unit)
+    {
+        if (Unit.type == "Rez")
+        {
+            /// event handler to wait for click on graveyard
+            // once clicked, return unit to life
+        }
+
+        if (Unit.type == "Health")
+        {
+            this.hp = this.hp*2;
+        }
+
+        if (Unit.type == "Damage")
+        {
+            this.dmg = this.dmg*2;
+        }
+
+        if (Unit.type == "Speed")
+        {
+            this.moveX = this.moveX*2;
+            this.MovePlus = this.movePlusX*2;
+        }
+
+    };
+
 
 }
