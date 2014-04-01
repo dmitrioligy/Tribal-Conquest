@@ -1,0 +1,154 @@
+
+<!--
+<style>
+	body {
+	  font-family: sans-serif;
+	}
+
+	#status {
+	  font-size: 14pt;
+	  color: gray;
+	  margin-top: 12px;
+	  margin-bottom: 12px;
+	}
+
+	#header {
+	  font-size: 14pt;
+	  color: gray;
+	  margin-top: 12px;
+	  margin-bottom: 12px;
+	}
+
+	#game {
+	  width: 800px;
+	  height: 600px;
+	  border: 1px solid gray;
+	  padding: 3px;
+	}
+
+	#game div {
+	  margin-top: 5px;
+	}
+
+	#searching_section {
+	  display: none;
+	}
+
+	#game {
+	  display: none;
+	}
+
+	.user_name {
+	  font-size: 10pt;
+	  font-weight: bold;
+	  color: blue;
+	}
+</style>
+-->
+
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.min.js"></script>
+<script src="Grid.js"></script>
+<script src="Move-Attack.js"></script>
+<script src="Render.js"></script>
+<script src="Unit.js"></script>
+
+
+<div id="warning">
+	JavaScript is required to run this app.
+</div>
+
+<div id="searching_section">
+	<div id="status"   >Connecting to Tribal Conquest ...</div>
+	Gamer Tag:
+	<input id="name" type="text"></input>
+	<input id="find" type="button" value="Find Game" disabled="true"></input>
+</div>
+
+<div id="container"></div>
+<script>
+  // $(document) returns a jQuery object representing the whole document (page).
+  // $(document).ready(fn) tells jQuery to call function 'fn' after the whole
+  // document is loaded.
+  $(document).ready(function() {
+    // Hide the warning section and show the login section.
+    $('#warning').css('display', 'none');
+    $('#searching_section').css('display', 'block');
+    $('#game').css('display', 'none');
+    
+    // Initialize socket.io.
+    // document.location.host returns the host of the current page.
+    var socket = io.connect('http://' + document.location.host);
+
+    // If a welcome message is received, it means the chat room is available.
+    // The Log In button will be then enabled.
+    socket.on(
+    	'welcome',
+    	function(message) {
+    		$('#status').text(message);
+    		$('#find').attr('disabled', false);
+    	});
+
+
+    socket.on(
+    	'searching',
+    	function(message){
+    		$('#status').text(message);
+    		$('#find').attr('disabled', true);
+    		$('#find').attr('visible', false);
+    		document.getElementById('find').style.visibility = 'hidden';  
+    	});
+
+    var game;
+    socket.on(
+    	'start_game',
+    	function() 
+    	{
+  		$('#searching_section').css('display', 'none');
+    	game = new Game();
+	    game.Initialize(2);
+	    var render = new Render(game);
+
+	//ENDDD
+		});
+
+    socket.on(
+    	'failed_find_game',
+    	function() {
+    		$('#status').text('Failed to find a game!');
+    	});
+
+    socket.on(
+    	'move_piece',
+    	function(message) {
+    		game.table[message.oldX][message.oldY].visual.fire('click');
+    		moveUnit(game.table[message.newX][message.newY].visual, message.oldX, message.oldY);
+    	});
+
+    $('#find').click(function() {
+    	var name = $('#name').val();
+    	if (name) {
+    		name = name.trim();
+    		if (name.length > 0) {
+    			socket.emit('find_game', { player_name: name });
+    		}
+    	}
+      // Clear the input field.
+  });
+
+    // When Enter is pressed in the name field, it should be treated as clicking
+    // on the Log In button.
+    $('#name').keyup(function(event) {
+    	if (event.keyCode == 13) {
+    		$('#find').click();
+    	}
+    });
+
+    
+});
+	
+
+	
+</script>
+
