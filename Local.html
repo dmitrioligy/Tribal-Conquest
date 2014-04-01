@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <!-- Includes JavaScript Files -->
+    <script src="Render.js"></script>
+    <script src="Game.js"></script>
+    <script src="Unit.js"></script>
+    <script src="Move-Attack.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> 
+    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.min.js"></script>
+
+
+    <head>
+        <meta charset="utf-8" />
+        <title> Tribal Conquest </title>
+    </head>
+
+        <body>
+            <div id="container">
+		        <script>
+		            var game = new Game();
+		            game.Initialize(2);	            
+		            //$(document.body).append(game.Test_Print());
+
+		            Render(game);
+		        </script>
+	        </div>
+    </body>
+
+
+</html>
