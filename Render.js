@@ -1,4 +1,5 @@
-function Render(game) 
+
+function Render(game, socket) 
 {
     // Moving parts of drawBoard (that don't have to be executed everytime) outside
     var board = game.table;

@@ -1,14 +1,7 @@
-// The node.js HTTP server.
-var app = require('http').createServer(handler);
-
-// The socket.io WebSocket server, running with the node.js server.
-var io = require('socket.io').listen(app);
 
 // Allows access to local file system.
 var fs = require('fs')
 
-// Listen on a high port.
-app.listen(10001);
 
 // Number of players
 var numOfPlayers = 0;
@@ -16,23 +9,31 @@ var numOfPlayers = 0;
 //array of player names
 var players = new Array(0);
 
-// Handles HTTP requests.
-function handler(request, response) {
-  // This will read the file 'menu.html', and call the function (the 2nd
-  // argument) to process the content of the file.
-  // __dirname is a preset variable pointing to the folder of this file.
-  fs.readFile(
-    __dirname + '/menu.html',
-    function(err, content) {
-      if (err) {
-        // If an error happened when loading 'menu.html', return a 500 error.
-        response.writeHead(500);
-        return response.end('Error loading menu.html!');
-      }
-      // If no error happened, return the content of 'menu.html'
-      response.writeHead(200, {'Content-Type': 'text/html'});
-      response.end(content);
-    });
+var static = require('node-static');
+
+var fileServer = new static.Server('./');
+
+var app = require('http').createServer(handler);
+
+var io = require('socket.io').listen(app);
+
+app.listen(10001);
+
+function handler (request, response) {
+    request.addListener('end', function () {
+        fileServer.serve(request, response, function (err, result) {
+            if (err) { // There was an error serving the file
+              {
+                response.writeHead("Error serving " + request.url + " - " + err.message);
+               return response.end('Error loading index.html!');
+              }
+
+                // Respond to the client
+                response.writeHead(err.status, err.headers);
+                response.end();
+            }
+        });
+    }).resume();
 }
 
 io.sockets.on(

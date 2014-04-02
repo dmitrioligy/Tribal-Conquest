@@ -1,57 +1,11 @@
-<!--
-<style>
-	body {
-	  font-family: sans-serif;
-	}
-
-	#status {
-	  font-size: 14pt;
-	  color: gray;
-	  margin-top: 12px;
-	  margin-bottom: 12px;
-	}
-
-	#header {
-	  font-size: 14pt;
-	  color: gray;
-	  margin-top: 12px;
-	  margin-bottom: 12px;
-	}
-
-	#game {
-	  width: 800px;
-	  height: 600px;
-	  border: 1px solid gray;
-	  padding: 3px;
-	}
-
-	#game div {
-	  margin-top: 5px;
-	}
-
-	#searching_section {
-	  display: none;
-	}
-
-	#game {
-	  display: none;
-	}
-
-	.user_name {
-	  font-size: 10pt;
-	  font-weight: bold;
-	  color: blue;
-	}
-</style>
--->
-
 <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.min.js"></script>
-<script src="Grid.js"></script>
-<script src="Move-Attack.js"></script>
+<script src="Game.js"></script>
 <script src="Render.js"></script>
 <script src="Unit.js"></script>
+<script src="Move-Attack.js"></script>
+<script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.min.js"></script>
+
 
 
 <div id="warning">
@@ -102,15 +56,12 @@
     var game;
     socket.on(
     	'start_game',
-    	function() 
-    	{
-  		$('#searching_section').css('display', 'none');
-    	game = new Game();
-	    game.Initialize(2);
-	    var render = new Render(game);
-
-	//ENDDD
-		});
+    	function() {
+    		$('#searching_section').css('display', 'none');
+    		game = new Game();
+    		game.Initialize(2);
+    		var render = new Render(game, socket);
+    	});
 
     socket.on(
     	'failed_find_game',
@@ -121,8 +72,9 @@
     socket.on(
     	'move_piece',
     	function(message) {
+    		// Simulating the clicks on other clients
     		game.table[message.oldX][message.oldY].visual.fire('click');
-    		moveUnit(game.table[message.newX][message.newY].visual, message.oldX, message.oldY);
+    		game.table[message.newX][message.newY].visual.fire('click');
     	});
 
     $('#find').click(function() {
@@ -133,21 +85,18 @@
     			socket.emit('find_game', { player_name: name });
     		}
     	}
-      // Clear the input field.
-  });
+	      // Clear the input field.
+	  });
 
-    // When Enter is pressed in the name field, it should be treated as clicking
-    // on the Log In button.
-    $('#name').keyup(function(event) {
-    	if (event.keyCode == 13) {
-    		$('#find').click();
-    	}
-    });
+	    // When Enter is pressed in the name field, it should be treated as clicking
+	    // on the Log In button.
+	    $('#name').keyup(function(event) {
+	    	if (event.keyCode == 13) {
+	    		$('#find').click();
+	    	}
+	    });
 
-    
-});
-	
-
-	
+	    
+	});
 </script>
 
