@@ -155,7 +155,7 @@ function Render(game, socket)
             var i = this.getAttr('myX'), j = this.getAttr('myY');
 
             // Do not repeat a move
-            if(board[unitX][unitY].owner == game.Current_Player) return;
+            if(board[i][j].owner == game.Current_Player) return;
 
             // Deselecting the previously selected cell
             if(game.lastClicked)
@@ -185,7 +185,9 @@ function Render(game, socket)
                 var x = canAttack[t][0], y = canAttack[t][1];
                 board[x][y].visual.fill("#D65E5E");
                 board[x][y].visual.off('click');
-                board[x][y].visual.on('click', attackUnit);
+                board[x][y].visual.on('click', function() {
+                    attackUnit(this, i, j);
+                });
             }
 
             game.lastClicked = [i, j];
@@ -197,7 +199,7 @@ function Render(game, socket)
             var i = this.getAttr('myX'), j = this.getAttr('myY');
 
             // Do not repeat a move
-            if(board[unitX][unitY].owner == game.Current_Player) return;
+            if(board[i][j].owner == game.Current_Player) return;
 
             // Deselecting the unit and reverting its event handler
             board[i][j].visual.fill((i + j) % 2 ? '#C4C4C4' : '#FFFFFF');
