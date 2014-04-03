@@ -31,7 +31,7 @@ Game.prototype.Attack = function (attackX, attackY, defX, defY)
 	}
 };
 
-this.prototype.Move = function (oldX, oldY, newX, newY)
+Game.prototype.Move = function (oldX, oldY, newX, newY)
 {
 	// Rename old and new cell. rename unit to be moved
 	var unit_moving = this.table[oldX][oldY];
