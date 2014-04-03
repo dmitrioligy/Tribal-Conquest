@@ -77,6 +77,14 @@
     		game.table[message.newX][message.newY].visual.fire('click');
     	});
 
+    socket.on(
+        'attack_piece',
+        function(message) {
+            // Simulating the clicks on other clients
+            game.table[message.oldX][message.oldY].visual.fire('click');
+            game.table[message.newX][message.newY].visual.fire('click');
+        });
+
     $('#find').click(function() {
     	var name = $('#name').val();
     	if (name) {

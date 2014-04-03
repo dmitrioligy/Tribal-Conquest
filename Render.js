@@ -101,7 +101,7 @@ function Render(game, socket)
             board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
             board[i][j].visual.on('click', clickOnUnit);
             stage.draw();
-            socket.emit('move_piece', { oldX: unitX, oldY: unitY, newX: i, newY: j })
+            socket.emit('move_piece', { oldX: unitX, oldY: unitY, newX: i, newY: j });
         }
 
         attackUnit = function(object, unitX, unitY)
@@ -115,13 +115,39 @@ function Render(game, socket)
             board[unitX][unitY].visual.fire('click');
 
             // Inflict damage
-            board[i][j].hp -= board[unitX][unitY].dmg
+            board[i][j].hp -= board[unitX][unitY].dmg;
 
             // What to do if the unit dies:
-            if(board[i][j].hp == 0)
+            var isDead = board[i][j].hp == 0;
+            if(isDead)
             {
+                // Move the attacked unit to the graveyard
+                var graveIndex = game.dead_container.length;
+                game.dead_container[graveIndex] = board[i][j];
+                var graveyardScale = calcImageData(7, 0);
+                board[i][j].image.setSize({width: graveyardScale.w, height: graveyardScale.h});
+                board[i][j].image.setPosition({x: graveIndex*10, y: 0}); //TODO calculate numbers
+                board[i][j].visual.off('click');
 
+                // Move the attacker to the clicked cell (in the database) and remove it from the previous
+                var temp = board[i][j].visual;
+                var temp2 = board[unitX][unitY].visual;
+                board[i][j] = board[unitX][unitY];
+                board[i][j].visual = temp;
+
+                board[unitX][unitY] = new Unit(null, null);
+                board[unitX][unitY].visual = temp2;
+                board[unitX][unitY].visual.off('click');
+
+                // Actually move the unit graphically
+                var data = calcImageData(i, j);
+                board[i][j].image.setPosition({x: data.x, y: data.y});
+                board[i][j].image.setSize({width: data.w, height: data.h});
+                board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
+                board[i][j].visual.on('click', clickOnUnit);
             }
+            stage.draw();  
+            socket.emit('attack_piece', {oldX: unitX, oldY: unitY, newX: i, newJ: j, dead: isDead});
         }
 
         clickOnUnit = function()
