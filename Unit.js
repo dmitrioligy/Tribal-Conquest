@@ -65,6 +65,7 @@ function Unit(Type, Owner)
 		   	this.attackPlus = 0;
 		   	this.attackX = 2;
 		   	this.buff = 0;
+		   	this.isRanged = true;
 		   	break;
 	   	case "Ranger":
 		   	this.dmg = 1;
@@ -74,6 +75,7 @@ function Unit(Type, Owner)
 		   	this.attackPlus = 3;
 		   	this.attackX = 3;
 		   	this.buff = 0;
+		   	this.isRanged = true;
 		   	break;
 	   	case "King":
 		   	this.dmg = 3;

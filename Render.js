@@ -87,6 +87,36 @@ function Render(game, socket)
 
         var layer = new Kinetic.Layer();
 
+        // function drawTooltip()
+        // {
+        //     var complexText = new Kinetic.Text({
+        //         x: 100,
+        //         y: 60,
+        //         text: 'COMPLEX TEXT\n\nAll the world\'s a stage, and all the men and women merely players. They have their exits and their entrances.',
+        //         fontSize: 18,
+        //         fontFamily: 'Calibri',
+        //         fill: '#555',
+        //         width: 380,
+        //         padding: 20,
+        //         align: 'center'
+        //       });
+
+        //       var rect = new Kinetic.Rect({
+        //         x: 100,
+        //         y: 60,
+        //         stroke: '#555',
+        //         strokeWidth: 5,
+        //         fill: '#ddd',
+        //         width: 380,
+        //         height: complexText.height(),
+        //         shadowColor: 'black',
+        //         shadowBlur: 10,
+        //         shadowOffset: {x:10,y:10},
+        //         shadowOpacity: 0.2,
+        //         cornerRadius: 10
+        //       });
+        // }
+
         moveUnit = function(object, unitX, unitY)
         {
             var i = object.getAttr('myX'), j = object.getAttr('myY');
@@ -136,22 +166,35 @@ function Render(game, socket)
                 board[i][j].image.setPosition({x: radius + graveIndex*2*radius, y: radius}); //TODO calculate numbers
                 board[i][j].visual.off('click');
 
-                // Move the attacker to the clicked cell (in the database) and remove it from the previous
-                var temp = board[i][j].visual;
-                var temp2 = board[unitX][unitY].visual;
-                board[i][j] = board[unitX][unitY];
-                board[i][j].visual = temp;
+                if(!board[unitX][unitY].isRanged) // If the unit is melee
+                {
+                    // Move the attacker to the clicked cell (in the database) overwriting the dead unit
+                    var temp = board[i][j].visual;
+                    var temp2 = board[unitX][unitY].visual;
+                    board[i][j] = board[unitX][unitY];
+                    board[i][j].visual = temp;
 
-                board[unitX][unitY] = new Unit(null, null);
-                board[unitX][unitY].visual = temp2;
-                board[unitX][unitY].visual.off('click');
+                    // Remove the attacker from its original position
+                    board[unitX][unitY] = new Unit(null, null);
+                    board[unitX][unitY].visual = temp2;
+                    board[unitX][unitY].visual.off('click');
 
-                // Actually move the unit graphically
-                var data = calcImageData(i, j);
-                board[i][j].image.setPosition({x: data.x, y: data.y});
-                board[i][j].image.setSize({width: data.w, height: data.h});
-                board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
-                board[i][j].visual.on('click', clickOnUnit);
+                    // Actually move the unit graphically
+                    var data = calcImageData(i, j);
+                    board[i][j].image.setPosition({x: data.x, y: data.y});
+                    board[i][j].image.setSize({width: data.w, height: data.h});
+                    board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
+                    board[i][j].visual.off('click');
+                    board[i][j].visual.on('click', clickOnUnit);
+                }
+                else
+                {
+                    // Remove the dead unit from its cell
+                    var temp = board[i][j].visual;
+                    board[i][j] = new Unit(null, null);
+                    board[i][j].visual = temp;
+                    board[i][j].visual.off('click');
+                }
             }
             stage.draw();  
             socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
