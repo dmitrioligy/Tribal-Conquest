@@ -68,31 +68,17 @@ io.sockets.on(
       });
 
 
-    // Listen to an event called 'move_piece'. The client should emit this event when
+    // Listen to an event called 'play_a_unit'. The client should emit this event when
     // a piece is moved
     client.on(
-      'move_piece',
+      'play_a_unit',
       function(message) {
         if ( message ) {
           // client.broadcast.emit sends a message to all other clients
           // to move the piece at the oldLocation to the newLocation
-          client.broadcast.emit('move_piece', { oldX: message.oldX, oldY: message.oldY,
+          client.broadcast.emit('play_a_unit', { oldX: message.oldX, oldY: message.oldY,
             newX: message.newX, newY: message.newY });
         }
       });
-
-    // Listen to an event called 'attack'. The client should emit this event when
-    // a unit wants to attack another unit
-    client.on(
-      'attack',
-      function(message){
-        if(message) {
-          // client.broadcast.emit sends a message to all other clients
-          // to make the unit at unitLocation to attack the unit at attackLocation
-          client.broadcast.emit('attack',{ unitLocationX: message.unitLocationX, unitLocationY: message.unitLocationY,
-            attackLocationX: message.attackLocationX, attackLocationY: message.attackLocationY});
-        }
-      }
-      );
 
   });

@@ -70,20 +70,11 @@
     	});
 
     socket.on(
-    	'move_piece',
+    	'play_a_unit',
     	function(message) {
     		// Simulating the clicks on other clients
-    		game.table[message.oldX][message.oldY].visual.fire('click');
-    		game.table[message.newX][message.newY].visual.fire('click');
+            synchroniseTurn(message.oldX, message.oldY, message.newX, message.newY);
     	});
-
-    socket.on(
-        'attack_piece',
-        function(message) {
-            // Simulating the clicks on other clients
-            game.table[message.oldX][message.oldY].visual.fire('click');
-            game.table[message.newX][message.newY].visual.fire('click');
-        });
 
     $('#find').click(function() {
     	var name = $('#name').val();

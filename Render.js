@@ -37,7 +37,16 @@ function Render(game, socket)
         };
     }
 
-    // window.onload = drawBoard;
+    // Simulating the client's clicking on a unit and either attacking or moving it
+    function synchroniseTurn(oldX, oldY, newX, newY)
+    {
+        // Deselecting the previously selected cell
+        if(game.lastClicked)
+            board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
+
+        game.table[oldX][oldY].visual.fire('click');
+        game.table[newX][newY].visual.fire('click');
+    }
 
     function drawBoard() 
     {
@@ -78,9 +87,6 @@ function Render(game, socket)
         {
             var i = object.getAttr('myX'), j = object.getAttr('myY');
 
-            // Do not repeat a move
-            if(board[unitX][unitY].owner == game.Current_Player) return;
-
             // Deselect unit
             board[unitX][unitY].visual.fire('click');
 
@@ -101,15 +107,12 @@ function Render(game, socket)
             board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
             board[i][j].visual.on('click', clickOnUnit);
             stage.draw();
-            socket.emit('move_piece', { oldX: unitX, oldY: unitY, newX: i, newY: j });
+            socket.emit('play_a_unit', { oldX: unitX, oldY: unitY, newX: i, newY: j });
         }
 
         attackUnit = function(object, unitX, unitY)
         {
             var i = this.getAttr('myX'), j = this.getAttr('myY');
-
-            // Do not repeat a move
-            if(board[unitX][unitY].owner == game.Current_Player) return;
 
             // Deselect unit
             board[unitX][unitY].visual.fire('click');
@@ -154,9 +157,6 @@ function Render(game, socket)
         {
             var i = this.getAttr('myX'), j = this.getAttr('myY');
 
-            // Do not repeat a move
-            if(board[i][j].owner == game.Current_Player) return;
-
             // Deselecting the previously selected cell
             if(game.lastClicked)
                 board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
@@ -197,9 +197,6 @@ function Render(game, socket)
         clickOnHighlightedUnit = function()
         {
             var i = this.getAttr('myX'), j = this.getAttr('myY');
-
-            // Do not repeat a move
-            if(board[i][j].owner == game.Current_Player) return;
 
             // Deselecting the unit and reverting its event handler
             board[i][j].visual.fill((i + j) % 2 ? '#C4C4C4' : '#FFFFFF');
