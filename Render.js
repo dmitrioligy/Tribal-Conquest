@@ -87,35 +87,54 @@ function Render(game, socket)
 
         var layer = new Kinetic.Layer();
 
-        // function drawTooltip()
-        // {
-        //     var complexText = new Kinetic.Text({
-        //         x: 100,
-        //         y: 60,
-        //         text: 'COMPLEX TEXT\n\nAll the world\'s a stage, and all the men and women merely players. They have their exits and their entrances.',
-        //         fontSize: 18,
-        //         fontFamily: 'Calibri',
-        //         fill: '#555',
-        //         width: 380,
-        //         padding: 20,
-        //         align: 'center'
-        //       });
+        function drawTooltip(i, j)
+        {
+            tooltip.moveToTop();
+            tooltipText.text(
+                'Type: ' + board[i][j].type + '\n' +
+                'Damage: ' + board[i][j].dmg + '\n' +
+                'Health Points: ' + board[i][j].hp + '\n' +
+                'Owner: ' + board[i][j].owner
+            );
+            tooltipBack.height(tooltipText.height());
+            tooltip.show();
+            stage.draw();
+        }
 
-        //       var rect = new Kinetic.Rect({
-        //         x: 100,
-        //         y: 60,
-        //         stroke: '#555',
-        //         strokeWidth: 5,
-        //         fill: '#ddd',
-        //         width: 380,
-        //         height: complexText.height(),
-        //         shadowColor: 'black',
-        //         shadowBlur: 10,
-        //         shadowOffset: {x:10,y:10},
-        //         shadowOpacity: 0.2,
-        //         cornerRadius: 10
-        //       });
-        // }
+        // Setting up the tooltip
+        var ttwidth = 250;
+        var ttheight = 250;
+        var tooltipText = new Kinetic.Text({
+            x: width - ttwidth,
+            y: 30,
+            fontSize: 18,
+            fontFamily: 'Calibri',
+            fill: '#555',
+            width: ttwidth - 50,
+            padding: 20,
+            align: 'left',
+          });
+          var tooltipBack = new Kinetic.Rect({
+            x: width - ttwidth,
+            y: 30,
+            stroke: '#555',
+            strokeWidth: 5,
+            fill: '#ddd',
+            width: tooltipText.width(),
+            height: tooltipText.height(),
+            shadowColor: 'black',
+            shadowBlur: 10,
+            shadowOffset: {x:10,y:10},
+            shadowOpacity: 0.2,
+            cornerRadius: 10
+          });
+          var tooltip = new Kinetic.Group({
+            draggable: true,
+          });
+          tooltip.add(tooltipBack);
+          tooltip.add(tooltipText);
+          tooltip.hide();
+          layer.add(tooltip);
 
         moveUnit = function(object, unitX, unitY)
         {
@@ -272,6 +291,7 @@ function Render(game, socket)
                 else board[x][y].visual.fill("#F0CCCC");
             }
 
+            drawTooltip(i, j);
             game.lastClicked = [i, j];
             stage.draw();
         }
@@ -314,8 +334,10 @@ function Render(game, socket)
                 board[x][y].visual.fill((x + y) % 2 ? '#C4C4C4' : '#FFFFFF');
             }
 
+            tooltip.hide();
             game.lastClicked = null;
             stage.draw();
+
         }
 
         function calcImageData(i, j)
@@ -446,6 +468,7 @@ function Render(game, socket)
             {
                 layer.add(board[i][j].visual);
             }
+
     }
     drawBoard();
 }
