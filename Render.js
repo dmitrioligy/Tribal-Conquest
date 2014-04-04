@@ -202,16 +202,30 @@ function Render(game, socket)
             for(var t = 0; t < attackRange.length; ++t)
             {
                 var x = attackRange[t][0], y = attackRange[t][1];
-                if(board[x][y].visual.fill() == '#66FF66')
+                if(board[x][y].visual.fill() == '#66FF66' || board[x][y].visual.fill() == '')
                 {
+                    var r, gx, gy;
+                    if(x == 0)
+                    {
+                        r = 1.35 * radius;
+                        gx = OX + r * Math.cos(y * Math.PI/4 + Math.PI/8);
+                        gy = OY + r * Math.sin(y * Math.PI/4 + Math.PI/8);
+                    }
+                    else
+                    {
+                        r = (x + 1.5) * radius;
+                        gx = OX + r * Math.cos(y * Math.PI/12 + Math.PI/24);
+                        gy = OY + r * Math.sin(y * Math.PI/12 + Math.PI/24);
+                    }
+                    board[x][y].visual.fill('');
                     board[x][y].visual.setAttrs({
-                        fillRadialGradientStartPoint: {x:0,y:0},
+                        fillRadialGradientStartPoint: {x:gx,y:gy},
                         fillRadialGradientStartRadius: 0,
-                        fillRadialGradientEndPoint: {x:0,y:0},
-                        fillRadialGradientEndRadius: radius,
-                        fillRadialGradientColorStops: [0, '#F0CCCC', 1, '#66FF66'],
+                        fillRadialGradientEndPoint: {x:gx,y:gy},
+                        fillRadialGradientEndRadius: radius/2,
+                        fillRadialGradientColorStops: [0, '#ED8282', 1, '#66FF66'],
                     });
-              }
+                }
                 else board[x][y].visual.fill("#F0CCCC");
             }
 
