@@ -1,42 +1,42 @@
-// Attack(game, unitX, unitY, attackX, attackY)
-// Move(game, oldX, oldY, newX, newY)
+// Attack( unitX, unitY, attackX, attackY)
+// Move( oldX, oldY, newX, newY)
 // Unit Movement
 		// IntoPizza(oldcolumn)
 		// ExitPizza(oldcolumn)
-		// Move_Range(game, row, col)
-		// Attack_Range(game, row, col)
+		// Move_Range( row, col)
+		// Attack_Range( row, col)
 
-Attack = function (game,attackX, attackY, defX, defY)
+Game.prototype.Attack = function (attackX, attackY, defX, defY)
 {
-	// takes in the game attacking unit's x, attacking unit's y, 
+	// takes in the this attacking unit's x, attacking unit's y, 
 	// defending unit's x, defending unit's y and 
-	if(game.table[attackX][attackY].owner != game.table[defX][defY].owner)
+	if(this.table[attackX][attackY].owner != this.table[defX][defY].owner)
 	{
-		var attacker = game.table[attackX][attackY];
-		game.table[defX][defY].Take_Damage(attacker.dmg);
+		var attacker = this.table[attackX][attackY];
+		this.table[defX][defY].Take_Damage(attacker.dmg);
 
-		if(game.table[defX][defY].dead == true)
+		if(this.table[defX][defY].dead == true)
 		{
 			// copy type and owner stats
-			var owner = game.table[defX][defY].owner;
-			var type =  game.table[defX][defY].type;
+			var owner = this.table[defX][defY].owner;
+			var type =  this.table[defX][defY].type;
 
 			// Empty unit 
-			game.table[defX][defY].Empty();
+			this.table[defX][defY].Empty();
 
 			// Place dead units type/ownership into dead container
 			var dead_unit =  new Unit(type, owner);
 			dead_unit.dead = true;
-			game.dead_container.push(dead_unit);
+			this.dead_container.push(dead_unit);
 		}
 	}
 };
 
-Move = function (game, oldX, oldY, newX, newY)
+Game.prototype.Move = function ( oldX, oldY, newX, newY)
 {
 	// Rename old and new cell. rename unit to be moved
-	var unit_moving = game.table[oldX][oldY];
-	var newLoc = game.table[newX][newY];
+	var unit_moving = this.table[oldX][oldY];
+	var newLoc = this.table[newX][newY];
 
 	// if newLoc is buff, apply buff
 	if(newLoc.buff == true)
@@ -45,9 +45,9 @@ Move = function (game, oldX, oldY, newX, newY)
 	}
 
 	// unit moves to location
-	game.table[newX][newY].Copy_Stats(unit_moving);
+	this.table[newX][newY].Copy_Stats(unit_moving);
 	// old location is reset
-	game.table[oldX][oldY].Empty();
+	this.table[oldX][oldY].Empty();
 };
 
 // lincoln's code ------------------------------------------------------------------
@@ -92,14 +92,14 @@ ExitPizza = function (oldColumn)
 	return (oldColumn * 3) + 1;
 };
 
-Move_Range = function (game, row, column)
+Game.prototype.Move_Range = function ( row, column)
 {
-	// input the game state, the row, and column of the unit selected
+	// input the this state, the row, and column of the unit selected
 	// returns array of arrays, the first parameter is the number of possible locations
 	// the second paramater is the x (answer[][0] = x location)
 	// and the second is the y (answer[][1] = y location)
 	var answer = new Array(0);
-	unit = (game.table[row][column]);
+	unit = (this.table[row][column]);
 	var add = 0;
 	var maxDistPlus = unit.movePlus;
 	var maxDistX = unit.moveX;
@@ -117,7 +117,7 @@ Move_Range = function (game, row, column)
 		{
 			newColumn = IntoPizza(column);
 		}
-		var possible = game.table[newRow][newColumn];
+		var possible = this.table[newRow][newColumn];
 		if( possible.buff || possible.type === null) 
 		{
 			answer[add] = [newRow, newColumn];
@@ -150,7 +150,7 @@ Move_Range = function (game, row, column)
 				{
 					newColumn = ExitPizza(column) + 1;
 				}
-				possible = game.table[newRow][newColumn];
+				possible = this.table[newRow][newColumn];
 		    	if( possible.buff || possible.type === null) //needs to edit other code or this to make work************
 		    	{
 		    		answer[add] = [newRow, newColumn];
@@ -174,7 +174,7 @@ Move_Range = function (game, row, column)
 		    {
 		    	break;
 		    }
-		    possible = game.table[newRow][newColumn];
+		    possible = this.table[newRow][newColumn];
 		    if( possible.buff || possible.type === null) //needs to edit other code or this to make work************
 		    {
 		    	answer[add] = [newRow, newColumn];
@@ -196,7 +196,7 @@ Move_Range = function (game, row, column)
 	    {
 	    	newColumn = (column + right) % 8;
 	    }
-	    possible = game.table[row][newColumn];
+	    possible = this.table[row][newColumn];
 	    if( possible.buff || possible.type === null) //needs to edit other code or this to make work*********
 	    {
 	    	answer[add] = [newRow, newColumn];
@@ -224,7 +224,7 @@ Move_Range = function (game, row, column)
 	        newColumn = newColumn + 24; //DO we want a global variable for max size values************************
 	    	}
 		}
-		possible = game.table[row][newColumn];
+		possible = this.table[row][newColumn];
 	    if( possible.buff || possible.type === null) //needs to edit other code or this to make work*********
 	    {
 	    	answer[add] = [newRow, newColumn];
@@ -253,7 +253,7 @@ Move_Range = function (game, row, column)
 		{
 			newColumn = IntoPizza(newColumn);
 		}
-		possible = game.table[newRow][newColumn];
+		possible = this.table[newRow][newColumn];
 	    if( possible.buff || possible.type === null) //needs to edit other code or this to make work*********
 	    {
 	    	answer[add] = [newRow, newColumn];
@@ -286,7 +286,7 @@ Move_Range = function (game, row, column)
 		{
 		     newColumn = newColumn - 24; //DO we want a global variable for max size values************************
 		}
-		possible = game.table[newRow][newColumn];
+		possible = this.table[newRow][newColumn];
 	    if( possible.buff || possible.type === null) //needs to edit other code or this to make work*********
 	    {
 	    	answer[add] = [newRow, newColumn];
@@ -315,7 +315,7 @@ Move_Range = function (game, row, column)
 		{
 	      newColumn = newColumn + 24; //DO we want a global variable for max size values************************
 	  	}
-	  	possible = game.table[newRow][newColumn];
+	  	possible = this.table[newRow][newColumn];
 		if( possible.buff || possible.type === null) //needs to edit other code or this to make work*********
 		{
 			answer[add] = [newRow, newColumn];
@@ -344,7 +344,7 @@ Move_Range = function (game, row, column)
 		{
 			newColumn = newColumn - 24;
 		}
-		possible = game.table[newRow][newColumn];
+		possible = this.table[newRow][newColumn];
 	    if( possible.buff || possible.type === null) //needs to edit other code or this to make work*********
 	    {
 	    	answer[add] = [newRow, newColumn];
@@ -360,9 +360,9 @@ Move_Range = function (game, row, column)
 };
 
 
-Attack_Range = function (game, row, column)
+Game.prototype.Attack_Range = function ( row, column)
 {
-	// input the game state, the row, and column of the unit selected
+	// input the this state, the row, and column of the unit selected
 	// returns a 3 deminsional array, the first paramater (answer[a][][])
 	// is either 0 or 1, 0 = possible attacks, 1 = attack range with empty units
 	// the second paramater (answer[][a][]) is the number of possible attacks/empty
@@ -371,7 +371,7 @@ Attack_Range = function (game, row, column)
 	var answer = new Array(2);
 	answer[0] = new Array(0);
 	answer[1] = new Array(0);
-	unit = (game.table[row][column]);
+	unit = (this.table[row][column]);
 	var maxDistPlus = unit.attackPlus;
 	var maxDistX = unit.attackX;
 	var add = 0;
@@ -390,7 +390,7 @@ Attack_Range = function (game, row, column)
 		{
 			newColumn = IntoPizza(column);
 		}
-		var possible = game.table[newRow][newColumn];
+		var possible = this.table[newRow][newColumn];
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
@@ -430,7 +430,7 @@ Attack_Range = function (game, row, column)
 				{
 					newColumn = ExitPizza(column) + 1;
 				}
-				possible = game.table[newRow][newColumn];
+				possible = this.table[newRow][newColumn];
 				if( canAttack && !possible.buff &&
 					possible.type !== null && possible.owner !== unit.owner )
 				{
@@ -458,7 +458,7 @@ Attack_Range = function (game, row, column)
 		    {
 		    	break;
 		    }
-		   	possible = game.table[newRow][newColumn];
+		   	possible = this.table[newRow][newColumn];
 			if( canAttack && !possible.buff &&
 				possible.type !== null && possible.owner !== unit.owner )
 			{
@@ -486,7 +486,7 @@ Attack_Range = function (game, row, column)
 	    {
 	    	newColumn = (column + right) % 8;
 	    }
-	    possible = game.table[newRow][newColumn];
+	    possible = this.table[newRow][newColumn];
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
@@ -520,7 +520,7 @@ Attack_Range = function (game, row, column)
 	        newColumn = newColumn + 24; //DO we want a global variable for max size values************************
 	    	}
 		}
-		possible = game.table[newRow][newColumn];
+		possible = this.table[newRow][newColumn];
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
@@ -555,7 +555,7 @@ Attack_Range = function (game, row, column)
 		{
 			newColumn = IntoPizza(newColumn);
 		}
-		possible = game.table[newRow][newColumn];
+		possible = this.table[newRow][newColumn];
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
@@ -594,7 +594,7 @@ Attack_Range = function (game, row, column)
 		{
 		     newColumn = newColumn - 24; //DO we want a global variable for max size values************************
 		}
-		possible = game.table[newRow][newColumn];
+		possible = this.table[newRow][newColumn];
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
@@ -629,7 +629,7 @@ Attack_Range = function (game, row, column)
 		{
 	      newColumn = newColumn + 24; //DO we want a global variable for max size values************************
 	  	}
-		possible = game.table[newRow][newColumn];
+		possible = this.table[newRow][newColumn];
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
@@ -664,7 +664,7 @@ Attack_Range = function (game, row, column)
 		{
 			newColumn = newColumn - 24;
 		}
-		possible = game.table[newRow][newColumn];
+		possible = this.table[newRow][newColumn];
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{

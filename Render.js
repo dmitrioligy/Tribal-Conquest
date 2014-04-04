@@ -183,7 +183,11 @@ function Render(game, socket)
             }
 
             //Highlighting the cells which the unit can attack and attaching proper event handlers to them
-            var canAttack = game.Attack_Range(i,j);
+            var attackData = game.Attack_Range(i,j);
+            var canAttack = attackData[0];
+            var attackRange = attackData[1];
+
+            // Highlighting the cells the unit can attack right now
             for(var t = 0; t < canAttack.length; ++t)
             {
                 var x = canAttack[t][0], y = canAttack[t][1];
@@ -192,6 +196,23 @@ function Render(game, socket)
                 board[x][y].visual.on('click', function() {
                     attackUnit(this, i, j);
                 });
+            }
+          
+            // Highlighting the cells which the unit could attack if there was an enemy inside
+            for(var t = 0; t < attackRange.length; ++t)
+            {
+                var x = attackRange[t][0], y = attackRange[t][1];
+                if(board[x][y].visual.fill() == '#66FF66')
+                {
+                    board[x][y].visual.setAttrs({
+                        fillRadialGradientStartPoint: {x:0,y:0},
+                        fillRadialGradientStartRadius: 0,
+                        fillRadialGradientEndPoint: {x:0,y:0},
+                        fillRadialGradientEndRadius: radius,
+                        fillRadialGradientColorStops: [0, '#F0CCCC', 1, '#66FF66'],
+                    });
+              }
+                else board[x][y].visual.fill("#F0CCCC");
             }
 
             game.lastClicked = [i, j];
@@ -217,7 +238,10 @@ function Render(game, socket)
             }
 
             // Deselecting the red cells and reverting their event handlers
-            var canAttack = game.Attack_Range(i,j);
+            var attackData = game.Attack_Range(i,j);
+            var canAttack = attackData[0];
+            var attackRange = attackData[1];
+
             for(var t = 0; t < canAttack.length; ++t)
             {
                 var x = canAttack[t][0], y = canAttack[t][1];
@@ -226,6 +250,13 @@ function Render(game, socket)
                 if(board[x][y].type)
                     board[x][y].visual.on('click', clickOnUnit);
             }
+
+            for(var t = 0; t < attackRange.length; ++t)
+            {
+                var x = attackRange[t][0], y = attackRange[t][1];
+                board[x][y].visual.fill((x + y) % 2 ? '#C4C4C4' : '#FFFFFF');
+            }
+
             game.lastClicked = null;
             stage.draw();
         }
