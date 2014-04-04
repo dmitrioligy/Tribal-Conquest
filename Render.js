@@ -38,8 +38,12 @@ function Render(game, socket)
     }
 
     // Simulating the client's clicking on a unit and either attacking or moving it
-    function synchroniseTurn(oldX, oldY, newX, newY)
+    this.synchronizeTurn = function(oldX, oldY, newX, newY)
     {
+        // Avoiding duplicate moves
+        if(game.Current_Player == game.table[oldX][oldY].owner)
+            return;
+
         // Deselecting the previously selected cell
         if(game.lastClicked)
             board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
@@ -112,7 +116,7 @@ function Render(game, socket)
 
         attackUnit = function(object, unitX, unitY)
         {
-            var i = this.getAttr('myX'), j = this.getAttr('myY');
+            var i = object.getAttr('myX'), j = object.getAttr('myY');
 
             // Deselect unit
             board[unitX][unitY].visual.fire('click');
@@ -129,7 +133,7 @@ function Render(game, socket)
                 game.dead_container[graveIndex] = board[i][j];
                 var graveyardScale = calcImageData(7, 0);
                 board[i][j].image.setSize({width: graveyardScale.w, height: graveyardScale.h});
-                board[i][j].image.setPosition({x: graveIndex*10, y: 0}); //TODO calculate numbers
+                board[i][j].image.setPosition({x: radius + graveIndex*2*radius, y: radius}); //TODO calculate numbers
                 board[i][j].visual.off('click');
 
                 // Move the attacker to the clicked cell (in the database) and remove it from the previous
@@ -150,7 +154,7 @@ function Render(game, socket)
                 board[i][j].visual.on('click', clickOnUnit);
             }
             stage.draw();  
-            socket.emit('attack_piece', {oldX: unitX, oldY: unitY, newX: i, newJ: j, dead: isDead});
+            socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
         }
 
         clickOnUnit = function()

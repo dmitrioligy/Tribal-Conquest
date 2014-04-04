@@ -53,14 +53,14 @@
     		document.getElementById('find').style.visibility = 'hidden';  
     	});
 
-    var game;
+    var game, render;
     socket.on(
     	'start_game',
     	function() {
     		$('#searching_section').css('display', 'none');
     		game = new Game();
     		game.Initialize(2);
-    		var render = new Render(game, socket);
+    		render = new Render(game, socket);
     	});
 
     socket.on(
@@ -73,7 +73,7 @@
     	'play_a_unit',
     	function(message) {
     		// Simulating the clicks on other clients
-            synchroniseTurn(message.oldX, message.oldY, message.newX, message.newY);
+            render.synchronizeTurn(message.oldX, message.oldY, message.newX, message.newY);
     	});
 
     $('#find').click(function() {
