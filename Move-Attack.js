@@ -374,7 +374,8 @@ Game.prototype.Attack_Range = function ( row, column)
 	unit = (this.table[row][column]);
 	var maxDistPlus = unit.attackPlus;
 	var maxDistX = unit.attackX;
-	var add = 0;
+	var can = 0;
+	cant = 0;
 
 	var canAttack = true;
 	//adds all possible attacks going directly forward
@@ -394,7 +395,8 @@ Game.prototype.Attack_Range = function ( row, column)
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
-			answer[0][add] = [newRow, newColumn];
+			answer[0][can] = [newRow, newColumn];
+			can++;
 			if(unit.type !== "Ranger")
 			{
 				canAttack = false; 
@@ -402,9 +404,9 @@ Game.prototype.Attack_Range = function ( row, column)
 		}
 		else
 		{
-			answer[1][add] = [newRow, newColumn];
+			answer[1][cant] = [newRow, newColumn];
+			cant++;
 		}
-		add++;
 	}
 
 
@@ -434,7 +436,8 @@ Game.prototype.Attack_Range = function ( row, column)
 				if( canAttack && !possible.buff &&
 					possible.type !== null && possible.owner !== unit.owner )
 				{
-					answer[0][add] = [newRow, newColumn];
+					answer[0][can] = [newRow, newColumn];
+					can++;
 					if(unit.type !== "Ranger")
 					{
 						canAttack = false; 
@@ -442,9 +445,9 @@ Game.prototype.Attack_Range = function ( row, column)
 				}
 				else
 				{
-					answer[1][add] = [newRow, newColumn];
+					answer[1][cant] = [newRow, newColumn];
+					cant++;
 				}
-				add++;
 			}
 		}
 	}
@@ -462,7 +465,8 @@ Game.prototype.Attack_Range = function ( row, column)
 			if( canAttack && !possible.buff &&
 				possible.type !== null && possible.owner !== unit.owner )
 			{
-				answer[0][add] = [newRow, newColumn];
+				answer[0][can] = [newRow, newColumn];
+				can++;
 				if(unit.type !== "Ranger")
 				{
 					canAttack = false; 
@@ -470,9 +474,9 @@ Game.prototype.Attack_Range = function ( row, column)
 			}
 			else
 			{
-				answer[1][add] = [newRow, newColumn];
+				answer[1][cant] = [newRow, newColumn];
+				cant++;
 			}
-			add++;
 		}
 	}
 
@@ -490,7 +494,8 @@ Game.prototype.Attack_Range = function ( row, column)
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
-			answer[0][add] = [newRow, newColumn];
+			answer[0][can] = [newRow, newColumn];
+			can++;
 			if(unit.type !== "Ranger")
 			{
 				canAttack = false; 
@@ -498,9 +503,9 @@ Game.prototype.Attack_Range = function ( row, column)
 		}
 		else
 		{
-			answer[1][add] = [newRow, newColumn];
+			answer[1][cant] = [newRow, newColumn];
+			cant++;
 		}
-		add++;
 	}
 
 	canAttack = true;
@@ -524,7 +529,8 @@ Game.prototype.Attack_Range = function ( row, column)
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
-			answer[0][add] = [newRow, newColumn];
+			answer[0][can] = [newRow, newColumn];
+			can++;
 			if(unit.type !== "Ranger")
 			{
 				canAttack = false; 
@@ -532,9 +538,9 @@ Game.prototype.Attack_Range = function ( row, column)
 		}
 		else
 		{
-			answer[1][add] = [newRow, newColumn];
+			answer[1][cant] = [newRow, newColumn];
+			cant++;
 		}
-		add++;
 	}
 
 	canAttack = true;
@@ -559,7 +565,8 @@ Game.prototype.Attack_Range = function ( row, column)
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
-			answer[0][add] = [newRow, newColumn];
+			answer[0][can] = [newRow, newColumn];
+			can++;
 			if(unit.type !== "Ranger")
 			{
 				canAttack = false; 
@@ -567,9 +574,9 @@ Game.prototype.Attack_Range = function ( row, column)
 		}
 		else
 		{
-			answer[1][add] = [newRow, newColumn];
+			answer[1][cant] = [newRow, newColumn];
+			cant++;
 		}
-		add++;
 	}
 
 	canAttack = true;
@@ -598,7 +605,8 @@ Game.prototype.Attack_Range = function ( row, column)
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
-			answer[0][add] = [newRow, newColumn];
+			answer[0][can] = [newRow, newColumn];
+			can++;
 			if(unit.type !== "Ranger")
 			{
 				canAttack = false; 
@@ -606,9 +614,9 @@ Game.prototype.Attack_Range = function ( row, column)
 		}
 		else
 		{
-			answer[1][add] = [newRow, newColumn];
+			answer[1][cant] = [newRow, newColumn];
+			cant++;
 		}
-		add++;
 	}
 
 	canAttack = true;
@@ -633,7 +641,8 @@ Game.prototype.Attack_Range = function ( row, column)
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
-			answer[0][add] = [newRow, newColumn];
+			answer[0][can] = [newRow, newColumn];
+			can++;
 			if(unit.type !== "Ranger")
 			{
 				canAttack = false; 
@@ -641,9 +650,9 @@ Game.prototype.Attack_Range = function ( row, column)
 		}
 		else
 		{
-			answer[1][add] = [newRow, newColumn];
+			answer[1][cant] = [newRow, newColumn];
+			cant++;
 		}
-		add++;
 	}
 
 	canAttack = true;
@@ -668,7 +677,8 @@ Game.prototype.Attack_Range = function ( row, column)
 		if( canAttack && !possible.buff &&
 			possible.type !== null && possible.owner !== unit.owner )
 		{
-			answer[0][add] = [newRow, newColumn];
+			answer[0][can] = [newRow, newColumn];
+			can++;
 			if(unit.type !== "Ranger")
 			{
 				canAttack = false; 
@@ -676,9 +686,9 @@ Game.prototype.Attack_Range = function ( row, column)
 		}
 		else
 		{
-			answer[1][add] = [newRow, newColumn];
+			answer[1][cant] = [newRow, newColumn];
+			cant++;
 		}
-		add++;
 	}
 
 	return answer;
