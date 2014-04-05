@@ -130,6 +130,7 @@ function Render(game, socket)
           });
           var tooltip = new Kinetic.Group({
             draggable: true,
+            opacity: 0.85,
           });
           tooltip.add(tooltipBack);
           tooltip.add(tooltipText);
