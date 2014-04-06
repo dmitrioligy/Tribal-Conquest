@@ -175,7 +175,7 @@ function Render(game, socket)
             board[i][j].hp -= board[unitX][unitY].dmg;
 
             // What to do if the unit dies:
-            var isDead = board[i][j].hp == 0;
+            var isDead = board[i][j].hp <= 0;
             if(isDead)
             {
                 // Move the attacked unit to the graveyard
