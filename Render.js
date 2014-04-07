@@ -5,6 +5,7 @@ function Render(game, socket)
     var board = game.table;
     var width, height, radius, OX, OY;
     var images = {};
+    game.unitsPlayed = 0;
     images["King"] = 'http://25.media.tumblr.com/2afd2f3d6761fd8afc59f8b7c72f7f53/tumblr_mo50xwuvIn1s8a280o1_1280.png';
     images["Peasant"] = 'http://www.pd4pic.com/images800_/cowboy-farm-farmer-smiley-trident-dung-fork.png';
     images["Ranger"] = 'http://clipartist.info/openclipart.org/SVG/paxed/bow_and_arrow_2-800px.png';
@@ -41,15 +42,19 @@ function Render(game, socket)
     this.synchronizeTurn = function(oldX, oldY, newX, newY)
     {
         // Avoiding duplicate moves
-        if(game.Current_Player == game.table[oldX][oldY].owner)
+        if(game.Current_Player.Name == game.table[oldX][oldY].owner)
             return;
 
         // Deselecting the previously selected cell
         if(game.lastClicked)
             board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
 
+        // We want to override turn restrictions when the server is trying to move the units
+        // for every single player
+        game.overrideTurns = true;
         game.table[oldX][oldY].visual.fire('click');
         game.table[newX][newY].visual.fire('click');
+        game.overrideTurns = false;
     }
 
     function drawBoard() 
@@ -160,8 +165,15 @@ function Render(game, socket)
             board[i][j].image.setSize({width: data.w, height: data.h});
             board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
             board[i][j].visual.on('click', clickOnUnit);
+            board[i][j].image.alreadyMoved = true;
+            game.unitsPlayed++;
             stage.draw();
             socket.emit('play_a_unit', { oldX: unitX, oldY: unitY, newX: i, newY: j });
+            if(game.unitsPlayed == 2)
+            {
+                socket.emit('next_turn');
+                game.unitsPlayed = 0;
+            }
         }
 
         attackUnit = function(object, unitX, unitY)
@@ -216,8 +228,15 @@ function Render(game, socket)
                     board[i][j].visual.off('click');
                 }
             }
+            board[i][j].image.alreadyMoved = true;
+            game.unitsPlayed++;
             stage.draw();  
             socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
+            if(game.unitsPlayed == 2)
+            {
+                socket.emit('next_turn');
+                game.unitsPlayed = 0;
+            }
         }
 
         clickOnUnit = function()
@@ -232,66 +251,68 @@ function Render(game, socket)
             board[i][j].visual.fill("#3399FF");
             board[i][j].visual.off('click');
             board[i][j].visual.on("click", clickOnHighlightedUnit);
-
-            //Highlighting the cells which the unit can move to and attaching proper event handlers to them
-            var canMove = game.Move_Range(i,j);
-            for(var t = 0; t < canMove.length; ++t)
+socket.emit('next_turn');
+            if(game.overrideTurns || (game.Current_Player.Name == board[i][j].owner && board[i][j].image.alreadyMoved))
             {
-                var x = canMove[t][0], y = canMove[t][1];
-                board[x][y].visual.fill("#66FF66");
-                board[x][y].visual.off('click');
-                board[x][y].visual.on("click", function() {
-                    moveUnit(this, i, j);
-                });
-            }
-
-            //Highlighting the cells which the unit can attack and attaching proper event handlers to them
-            var attackData = game.Attack_Range(i,j);
-            var canAttack = attackData[0];
-            var attackRange = attackData[1];
-
-            // Highlighting the cells the unit can attack right now
-            for(var t = 0; t < canAttack.length; ++t)
-            {
-                var x = canAttack[t][0], y = canAttack[t][1];
-                board[x][y].visual.fill("#D65E5E");
-                board[x][y].visual.off('click');
-                board[x][y].visual.on('click', function() {
-                    attackUnit(this, i, j);
-                });
-            }
-          
-            // Highlighting the cells which the unit could attack if there was an enemy inside
-            for(var t = 0; t < attackRange.length; ++t)
-            {
-                var x = attackRange[t][0], y = attackRange[t][1];
-                if(board[x][y].visual.fill() == '#66FF66' || board[x][y].visual.fill() == '')
+                //Highlighting the cells which the unit can move to and attaching proper event handlers to them
+                var canMove = game.Move_Range(i,j);
+                for(var t = 0; t < canMove.length; ++t)
                 {
-                    var r, gx, gy;
-                    if(x == 0)
-                    {
-                        r = 1.35 * radius;
-                        gx = OX + r * Math.cos(y * Math.PI/4 + Math.PI/8);
-                        gy = OY + r * Math.sin(y * Math.PI/4 + Math.PI/8);
-                    }
-                    else
-                    {
-                        r = (x + 1.5) * radius;
-                        gx = OX + r * Math.cos(y * Math.PI/12 + Math.PI/24);
-                        gy = OY + r * Math.sin(y * Math.PI/12 + Math.PI/24);
-                    }
-                    board[x][y].visual.fill('');
-                    board[x][y].visual.setAttrs({
-                        fillRadialGradientStartPoint: {x:gx,y:gy},
-                        fillRadialGradientStartRadius: 0,
-                        fillRadialGradientEndPoint: {x:gx,y:gy},
-                        fillRadialGradientEndRadius: radius/2,
-                        fillRadialGradientColorStops: [0, '#ED8282', 1, '#66FF66'],
+                    var x = canMove[t][0], y = canMove[t][1];
+                    board[x][y].visual.fill("#66FF66");
+                    board[x][y].visual.off('click');
+                    board[x][y].visual.on("click", function() {
+                        moveUnit(this, i, j);
                     });
                 }
-                else board[x][y].visual.fill("#F0CCCC");
-            }
 
+                //Highlighting the cells which the unit can attack and attaching proper event handlers to them
+                var attackData = game.Attack_Range(i,j);
+                var canAttack = attackData[0];
+                var attackRange = attackData[1];
+
+                // Highlighting the cells the unit can attack right now
+                for(var t = 0; t < canAttack.length; ++t)
+                {
+                    var x = canAttack[t][0], y = canAttack[t][1];
+                    board[x][y].visual.fill("#D65E5E");
+                    board[x][y].visual.off('click');
+                    board[x][y].visual.on('click', function() {
+                        attackUnit(this, i, j);
+                    });
+                }
+              
+                // Highlighting the cells which the unit could attack if there was an enemy inside
+                for(var t = 0; t < attackRange.length; ++t)
+                {
+                    var x = attackRange[t][0], y = attackRange[t][1];
+                    if(board[x][y].visual.fill() == '#66FF66' || board[x][y].visual.fill() == '')
+                    {
+                        var r, gx, gy;
+                        if(x == 0)
+                        {
+                            r = 1.35 * radius;
+                            gx = OX + r * Math.cos(y * Math.PI/4 + Math.PI/8);
+                            gy = OY + r * Math.sin(y * Math.PI/4 + Math.PI/8);
+                        }
+                        else
+                        {
+                            r = (x + 1.5) * radius;
+                            gx = OX + r * Math.cos(y * Math.PI/12 + Math.PI/24);
+                            gy = OY + r * Math.sin(y * Math.PI/12 + Math.PI/24);
+                        }
+                        board[x][y].visual.fill('');
+                        board[x][y].visual.setAttrs({
+                            fillRadialGradientStartPoint: {x:gx,y:gy},
+                            fillRadialGradientStartRadius: 0,
+                            fillRadialGradientEndPoint: {x:gx,y:gy},
+                            fillRadialGradientEndRadius: radius/2,
+                            fillRadialGradientColorStops: [0, '#ED8282', 1, '#66FF66'],
+                        });
+                    }
+                    else board[x][y].visual.fill("#F0CCCC");
+                }
+            }
             drawTooltip(i, j);
             game.lastClicked = [i, j];
             stage.draw();
@@ -338,7 +359,6 @@ function Render(game, socket)
             tooltip.hide();
             game.lastClicked = null;
             stage.draw();
-
         }
 
         function calcImageData(i, j)
@@ -413,6 +433,8 @@ function Render(game, socket)
                     image: imageObj,
                     width: data.w,
                     height: data.h,
+                        filter: Kinetic.Filters.Grayscale, //Step 2
+    filterRadius: 20
                 });
                 board[i][j].visual.on("click", clickOnUnit);
                 board[i][j].image = unit;
