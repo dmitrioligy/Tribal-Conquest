@@ -117,11 +117,11 @@ function Game(socket)
 	{
 
 		// Check if new_player == most recently added player (duplicate check)
-   		if (this.Player_List[this.Player_List.legth-1].name == new_player.name)
-   		{
-   			// Do not allow adding same name player
-   			return;
-   		}
+   		// if (this.Player_List[this.Player_List.legth-1].Name == new_player.name)
+   		// {
+   		// 	// Do not allow adding same name player
+   		// 	return;
+   		// }
 
 		// Add a single player to the game
 	   	if (this.Player_List.length < 4)
