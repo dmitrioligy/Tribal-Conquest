@@ -20,6 +20,7 @@ function Game(socket)
         // Player_Turn(player)
         // Initialize(players)
         // RandomBuff()
+        // Middle_Check() - check middle to see who scores
 
     // Game Members decleration
     this.Player_List = [];
@@ -253,7 +254,44 @@ function Game(socket)
     // Check Score in middle
     this.Middle_Check = function()
     {
+    	var players = [[]];
 
+    	for (var i = 0; i < this.table[0].length; i++)
+		{
+			// Check middle pizza which units reside
+			switch(this.table[0][i].owner)
+			{
+				case "P1":
+					players[0].push(this.table[0][i]);
+					break;
+				case "P2":
+					players[1].push(this.table[0][i]);
+					break;
+				case "P3":
+					players[2].push(this.table[0][i]);
+					break;
+				case "P4":
+					players[3].push(this.table[0][i]);
+					break;
+				default:
+					break;
+			}
+    	}
+
+    	var max_player_name;
+    	var max_units = 0;
+    	for ( var i = 0; i < 4; i++)
+    	{
+    		// ***************** FIX ***********************
+    		// Needs to allow for score to be added if players tie in # of units
+    		if (max_units < players[0].length)
+    		{
+    			max_player_name = players[0][0].owner;
+    			max_units = players[0].length;
+    		}
+    	}
+
+    	this.Add_Point(max_player);
 
     }    
 
