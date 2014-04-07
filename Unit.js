@@ -131,7 +131,7 @@ function Unit(Type, Owner)
 		delete this.buff;
 		delete this.dead;
 		delete this.owner;
-		delete this.used;
+		delete this.image.used;
 	}
 
 	this.Take_Damage = function(damage)

@@ -299,7 +299,8 @@ function Game(socket)
     	{
     		for(var j = 0; j < this.table[i].length; j++)
     		{
-    			this.table[i][j].image.used = false;
+          if(this.table[i][j])
+    			 this.table[i][j].image.used = false;
     		}
     	}
     };
