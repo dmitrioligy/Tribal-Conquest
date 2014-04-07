@@ -140,6 +140,7 @@ function Game(socket)
 	   		// Set Player_List member Turn = to index 0;
 	   		this.Player_List.Turn = 0;
 	   		this.Player_List[0].Turn = true;
+	   		this.Current_Player = this.Player_List[0];
 	   	}
 	};
 
