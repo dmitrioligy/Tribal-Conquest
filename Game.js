@@ -178,6 +178,9 @@ function Game(socket)
 		if (this.Player_List.Turn == (this.Player_List.length - 1) )
 		{
 			this.Player_List.Turn = 0;
+
+			// Check middle for scores
+			this.Middle_Check();
 		}
 
 		// else increment turn to next player
