@@ -46,19 +46,22 @@ io.sockets.on(
     // it wants to find a game
     client.on(
       'find_game',
-      function(message) {
+      function(message) 
+      {
         // This function extracts the player name from the find_game message, stores
         // it to the client object, sends a searching message to the client, and
         // starts the game if there are more than 1 players waiting
-        if (message && message.player_name) {
+        if (message && message.player_name) 
+        {
           players[numOfPlayers] = message.player_name;
           numOfPlayers++;
           client.set('player_name', message.player_name);
           client.set('player_number', numOfPlayers);
           client.set('turn_number', 0);
           client.emit('searching','Searching for game...');
-          if(numOfPlayers > 1){
-            io.sockets.emit('start_game');
+          if(numOfPlayers > 1)
+          {
+      		io.sockets.emit('start_game');
           }
         }
         // When something is wrong, send a find_failed message to the client.
@@ -70,15 +73,45 @@ io.sockets.on(
 
     // Listen to an event called 'play_a_unit'. The client should emit this event when
     // a piece is moved
-    client.on(
+    client.on
+    (
       'play_a_unit',
-      function(message) {
-        if ( message ) {
+      function(message) 
+      {
+        if ( message )
+        {
           // client.broadcast.emit sends a message to all other clients
           // to move the piece at the oldLocation to the newLocation
-          client.broadcast.emit('play_a_unit', { oldX: message.oldX, oldY: message.oldY,
+          client.broadcast.emit('sync_client_action', { oldX: message.oldX, oldY: message.oldY,
             newX: message.newX, newY: message.newY });
         }
-      });
+      }
+    );
+
+
+    // Listen for new players
+    client.on
+    (
+    	'add_player',
+    	function(new_player)
+    	{
+    		// Broadcast to all other players a new player entered
+    		client.broadcast.emit('add_player', new_player);
+    	}
+    );
+
+
+    // Listen for end of turn
+    client.on
+    (
+    	'next_turn',
+    	function()
+    	{	
+    		// broadcast to others end of turn
+    		client.broadcast.emit('next_turn');
+    	}
+    );
+	
+
 
   });

@@ -36,64 +36,118 @@
 
     // If a welcome message is received, it means the chat room is available.
     // The Log In button will be then enabled.
-    socket.on(
+    socket.on
+    (
     	'welcome',
-    	function(message) {
+    	function(message) 
+    	{
     		$('#status').text(message);
     		$('#find').attr('disabled', false);
-    	});
+    	}
+    );
 
 
-    socket.on(
+    socket.on
+    (
     	'searching',
-    	function(message){
+    	function(message)
+    	{
     		$('#status').text(message);
     		$('#find').attr('disabled', true);
     		$('#find').attr('visible', false);
     		document.getElementById('find').style.visibility = 'hidden';  
-    	});
+    	}
+    );
 
+
+    // Start Game Initialization
     var game, render;
-    socket.on(
+    socket.on
+    (
     	'start_game',
-    	function() {
+    	function() 
+    	{
     		$('#searching_section').css('display', 'none');
-    		game = new Game();
+    		game = new Game(socket);
     		game.Initialize(2);
     		render = new Render(game, socket);
-    	});
-
-    socket.on(
-    	'failed_find_game',
-    	function() {
-    		$('#status').text('Failed to find a game!');
-    	});
-
-    socket.on(
-    	'play_a_unit',
-    	function(message) {
-    		// Simulating the clicks on other clients
-            render.synchronizeTurn(message.oldX, message.oldY, message.newX, message.newY);
-    	});
-
-    $('#find').click(function() {
-    	var name = $('#name').val();
-    	if (name) {
-    		name = name.trim();
-    		if (name.length > 0) {
-    			socket.emit('find_game', { player_name: name });
-    		}
     	}
-	      // Clear the input field.
-	  });
+    );
 
-	    // When Enter is pressed in the name field, it should be treated as clicking
-	    // on the Log In button.
-	    $('#name').keyup(function(event) {
-	    	if (event.keyCode == 13) {
+
+    socket.on
+    (
+    	'failed_find_game',
+    	function() 
+    	{
+    		$('#status').text('Failed to find a game!');
+    	}
+    );
+
+
+    // Listen for new player added
+    socket.on
+    (
+    	'add_player',
+    	function(new_player) 
+    	{
+    		// Add a player to clients game
+           	game.Add_Player(new_player.name);
+    	}
+    );
+
+    // Sync player move/attack
+    socket.on
+    (
+    	'sync_client_action',
+    	function(message) 
+    	{
+    		// Simulating the clicks on other clients 
+           	render.synchronizeTurn(message.oldX, message.oldY, message.newX, message.					newY);
+    	}
+    );
+
+
+    socket.on
+    (
+    	'next_turn',
+    	function()
+    	{
+    		game.Next_Turn();
+    	}
+    );
+
+
+
+    $('#find').click
+    (
+    	function() 
+	    {
+	    	var name = $('#name').val();
+	    	if (name) 
+	    	{
+	    		name = name.trim();
+	    		if (name.length > 0) 
+	    		{
+	    			socket.emit('find_game', { player_name: name });
+	    		}
+	    	}
+		      // Clear the input field.
+		}
+	);
+
+    // When Enter is pressed in the name field, it should be treated as clicking
+    // on the Log In button.
+    $('#name').keyup
+    (
+	    function(event) 
+	    {
+	    	if (event.keyCode == 13) 
+	    	{
 	    		$('#find').click();
 	    	}
-	    });
+	    }
+	);
 
 	    
 	});
