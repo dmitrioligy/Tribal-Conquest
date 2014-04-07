@@ -5,7 +5,6 @@ function Render(game, socket)
     var board = game.table;
     var width, height, radius, OX, OY;
     var images = {};
-    game.unitsPlayed = 0;
     images["King"] = 'http://25.media.tumblr.com/2afd2f3d6761fd8afc59f8b7c72f7f53/tumblr_mo50xwuvIn1s8a280o1_1280.png';
     images["Peasant"] = 'http://www.pd4pic.com/images800_/cowboy-farm-farmer-smiley-trident-dung-fork.png';
     images["Ranger"] = 'http://clipartist.info/openclipart.org/SVG/paxed/bow_and_arrow_2-800px.png';
@@ -72,6 +71,9 @@ function Render(game, socket)
             width: width,
             height: height
         });
+
+        game.unitsPlayed = 0;
+        game.overrideTurns = false;
 
         function resizeThings() 
         {
