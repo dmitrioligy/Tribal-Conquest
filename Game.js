@@ -299,9 +299,9 @@ function Game(socket)
 
     this.Reset_Used = function()
     {
-    	for(var i = 0; i < this.table.length)
+    	for(var i = 0; i < this.table.length; i++)
     	{
-    		for(var j = 0; j < this.table[i].length)
+    		for(var j = 0; j < this.table[i].length; j++)
     		{
     			table[i][j].used = false;
     		}
