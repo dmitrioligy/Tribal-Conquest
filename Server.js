@@ -88,19 +88,6 @@ io.sockets.on(
       }
     );
 
-
-    // Listen for new players
-    client.on
-    (
-    	'add_player',
-    	function(new_player)
-    	{
-    		// Broadcast to all other players a new player entered
-    		client.broadcast.emit('add_player', new_player);
-    	}
-    );
-
-
     // Listen for end of turn
     client.on
     (

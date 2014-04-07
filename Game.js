@@ -4,7 +4,7 @@
 *    Array of Array's of Units.
 *    
 ***************************************/
-function Game(socket)
+function Game()
 {
 
     // Members
@@ -121,9 +121,6 @@ function Game(socket)
 	   		var new_player = { Score: 0, Name: name, Index: null };	   
 	   		new_player["Index"] = this.Player_List[this.Player_List.length-1];
 	   		this.Player_List.push(new_player);
-
-	   		// Player added, now notify server of new player
-	   		// socket.emit('add_player', new_player);
 	   	}
 
 	   	// If the player added was #1 player, they take the first turn
