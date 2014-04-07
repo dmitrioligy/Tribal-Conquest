@@ -234,7 +234,7 @@ function Render(game, socket)
             game.unitsPlayed++;
             stage.draw();  
             socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
-            if(game.unitsPlayed == 2)
+            if(game.unitsPlayed == 2 && !override)
             {
                 socket.emit('next_turn');
                 game.unitsPlayed = 0;
@@ -253,7 +253,7 @@ function Render(game, socket)
             board[i][j].visual.fill("#3399FF");
             board[i][j].visual.off('click');
             board[i][j].visual.on("click", clickOnHighlightedUnit);
-            if(game.overrideTurns || (game.Current_Player.Name == board[i][j].owner && !board[i][j].image.alreadyMoved))
+            if(game.overrideTurns || (game.Current_Player.Name == board[i][j].owner && window.name == game.Current_Player.Name && !board[i][j].image.alreadyMoved))
             {
                 //Highlighting the cells which the unit can move to and attaching proper event handlers to them
                 var canMove = game.Move_Range(i,j);

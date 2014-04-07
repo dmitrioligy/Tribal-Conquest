@@ -24,6 +24,7 @@
   // $(document) returns a jQuery object representing the whole document (page).
   // $(document).ready(fn) tells jQuery to call function 'fn' after the whole
   // document is loaded.
+  var name = "";
   $(document).ready(function() {
     // Hide the warning section and show the login section.
     $('#warning').css('display', 'none');
@@ -129,7 +130,7 @@
     (
     	function() 
 	    {
-	    	var name = $('#name').val();
+	    	name = $('#name').val();
 	    	if (name) 
 	    	{
 	    		name = name.trim();
