@@ -167,7 +167,7 @@ function Render(game, socket)
             board[i][j].image.setSize({width: data.w, height: data.h});
             board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
             board[i][j].visual.on('click', clickOnUnit);
-            board[i][j].image.alreadyMoved = true;
+            board[i][j].image.used = true;
             game.unitsPlayed++;
             stage.draw();
             socket.emit('play_a_unit', { oldX: unitX, oldY: unitY, newX: i, newY: j });
@@ -175,6 +175,7 @@ function Render(game, socket)
             {
                 socket.emit('next_turn');
                 game.unitsPlayed = 0;
+                game.Reset_Used();
             }
         }
 
@@ -230,7 +231,7 @@ function Render(game, socket)
                     board[i][j].visual.off('click');
                 }
             }
-            board[i][j].image.alreadyMoved = true;
+            board[i][j].image.used = true;
             game.unitsPlayed++;
             stage.draw();  
             socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
@@ -238,6 +239,7 @@ function Render(game, socket)
             {
                 socket.emit('next_turn');
                 game.unitsPlayed = 0;
+                game.Reset_Used();
             }
         }
 
@@ -256,7 +258,7 @@ function Render(game, socket)
             if(game.overrideTurns || (
                                         game.Current_Player.Name == board[i][j].owner && 
                                         window.name == game.Current_Player.Name && 
-                                        !board[i][j].image.alreadyMoved
+                                        !board[i][j].image.used
                                      ))
             {
                 //Highlighting the cells which the unit can move to and attaching proper event handlers to them
