@@ -165,6 +165,9 @@ function Game(socket)
 	// Currently player which can make moves/attacks
 	this.Next_Turn = function()
 	{
+		// Disable current players turn priveledge
+		this.Player_List[this.Player_List.Turn].Turn = false;
+
 		// If turn == max players, cycle back to 0 position of turn
 		if (this.Player_List.Turn == (this.Player_List.length - 1) )
 		{
@@ -177,7 +180,12 @@ function Game(socket)
 			this.Player_List.Turn++;
 		}
 
+		// Set Current player one who has the turn available
 		this.Current_Player = this.player_List[this.Player_List.Turn];
+
+		// Enable their turn value
+		this.Player_List[this.Player_List.Turn].Turn = true;
+
 
 	};
 
@@ -240,6 +248,13 @@ function Game(socket)
     	result = result + "</table>";
 
     	return result;
-    };    
+    };
+
+    // Check Score in middle
+    this.Middle_Check = function()
+    {
+
+
+    }    
 
 }
