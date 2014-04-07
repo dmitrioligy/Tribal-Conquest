@@ -65,12 +65,18 @@
     socket.on
     (
     	'start_game',
-    	function() 
+    	function(players) 
     	{
     		$('#searching_section').css('display', 'none');
     		game = new Game(socket);
     		game.Initialize(2);
     		render = new Render(game, socket);
+
+    		// Initialize players to the game
+    		for (var i = 0; i < players.length; i++)
+    		{
+    			game.Add_Player(players[i]);
+    		}
     	}
     );
 

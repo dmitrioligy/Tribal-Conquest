@@ -131,7 +131,7 @@ function Game(socket)
 	   		this.Player_List.push(new_player);
 
 	   		// Player added, now notify server of new player
-	   		socket.emit('add_player', new_player);
+	   		// socket.emit('add_player', new_player);
 	   	}
 
 	   	// If the player added was #1 player, they take the first turn

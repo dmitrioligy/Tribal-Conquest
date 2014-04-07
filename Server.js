@@ -61,7 +61,7 @@ io.sockets.on(
           client.emit('searching','Searching for game...');
           if(numOfPlayers > 1)
           {
-      		io.sockets.emit('start_game');
+      		io.sockets.emit('start_game', {allPlayers : players});
           }
         }
         // When something is wrong, send a find_failed message to the client.
