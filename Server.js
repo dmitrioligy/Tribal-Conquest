@@ -108,7 +108,7 @@ io.sockets.on(
     	function()
     	{	
     		// broadcast to others end of turn
-    		client.broadcast.emit('next_turn');
+    		io.sockets.emit('next_turn');
     	}
     );
 	
