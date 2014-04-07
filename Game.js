@@ -11,6 +11,7 @@ function Game(socket)
        // this.dead_container
        // this.table[x][y] is a array of array of Units - refer to Unit class
        // this.Player_List - array of players
+
        // this.Current_Player
 
     // Methods
@@ -21,6 +22,9 @@ function Game(socket)
         // Initialize(players)
         // RandomBuff()
         // Middle_Check() - check middle to see who scores
+        // Reset_Used() - reset all units used to false
+
+
 
     // Game Members decleration
     this.Player_List = [];
@@ -182,12 +186,10 @@ function Game(socket)
 		}
 
 		// Set Current player one who has the turn available
-		this.Current_Player = this.player_List[this.Player_List.Turn];
+		this.Current_Player = this.Player_List[this.Player_List.Turn];
 
 		// Enable their turn value
 		this.Player_List[this.Player_List.Turn].Turn = true;
-
-
 	};
 
 	// The amount of time a player has for their turn
@@ -293,6 +295,17 @@ function Game(socket)
 
     	this.Add_Point(max_player);
 
-    }    
+    };   
+
+    this.Reset_Used = function()
+    {
+    	for(var i = 0; i < this.table.length)
+    	{
+    		for(var j = 0; j < this.table[i].length)
+    		{
+    			table[i][j].used = false;
+    		}
+    	}
+    };
 
 }

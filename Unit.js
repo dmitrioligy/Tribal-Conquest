@@ -19,6 +19,7 @@ function Unit(Type, Owner)
        // this.attackX
        // this.buff = false
        // this.dead bool
+       // this.used
    // Unit Buff
    	// this.buff = true
    // Unit null
@@ -44,6 +45,7 @@ function Unit(Type, Owner)
     {
    	 	this.owner = Owner;
     	this.dead = false;
+    	this.used = false;
     }
 
    	switch(Type)
@@ -129,6 +131,7 @@ function Unit(Type, Owner)
 		delete this.buff;
 		delete this.dead;
 		delete this.owner;
+		delete this.used;
 	}
 
 	this.Take_Damage = function(damage)
