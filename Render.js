@@ -171,7 +171,8 @@ function Render(game, socket)
             game.unitsPlayed++;
             stage.draw();
             socket.emit('play_a_unit', { oldX: unitX, oldY: unitY, newX: i, newY: j });
-            if(game.unitsPlayed == 2)
+
+            if(game.unitsPlayed == 2 && !game.overrideTurns)
             {
                 socket.emit('next_turn');
                 game.unitsPlayed = 0;
@@ -235,7 +236,8 @@ function Render(game, socket)
             game.unitsPlayed++;
             stage.draw();  
             socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
-            if(game.unitsPlayed == 2 && !override)
+
+            if(game.unitsPlayed == 2 && !game.overrideTurns)
             {
                 socket.emit('next_turn');
                 game.unitsPlayed = 0;
