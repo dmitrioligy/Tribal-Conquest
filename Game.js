@@ -144,21 +144,43 @@ function Game(socket)
 		{
 			case "P1":
 				this.Player_List[0].Score = this.Player_List[0].Score + 1;
+				if (this.Player_List[0].Score == 10)
+				{
+					this.Game_Over(this.Player_List[0].Name);
+				}
 				break;
 			case "P2":
 				this.Player_List[1].Score = this.Player_List[1].Score + 1;
+				if (this.Player_List[0].Score == 10)
+				{
+					this.Game_Over(this.Player_List[0].Name);
+				}
 				break;
 			case "P3":
 				this.Player_List[2].Score = this.Player_List[2].Score + 1;
+				if (this.Player_List[0].Score == 10)
+				{
+					this.Game_Over(this.Player_List[0].Name);
+				}
 				break;
 			case "P4":
 				this.Player_List[3].Score = this.Player_List[3].Score + 1;
+				if (this.Player_List[0].Score == 10)
+				{
+					this.Game_Over(this.Player_List[0].Name);
+				}
 				break;
 			default:
 				break;
 		}
 
 	};
+
+	this.Gane_Over =  function(player)
+	{
+		// Clear Board
+		// player is the winner
+	}
 
 	// Currently player which can make moves/attacks
 	this.Next_Turn = function()
@@ -252,13 +274,19 @@ function Game(socket)
     // Check Score in middle
     this.Middle_Check = function()
     {
-    	var players = [[]];
+    	var players = new Array(this.Player_List.length);
+    	for(var i = 0; i < players.length; i++)
+    	{
+    		players[i] = new Array(0);
+    	}
 
     	for (var i = 0; i < this.table[0].length; i++)
 		{
 			// Check middle pizza which units reside
 			switch(this.table[0][i].owner)
 			{
+				case "undefined":
+					break;
 				case "P1":
 					players[0].push(this.table[0][i]);
 					break;
@@ -278,18 +306,24 @@ function Game(socket)
 
     	var max_player_name;
     	var max_units = 0;
-    	for ( var i = 0; i < 4; i++)
+    	for ( var i = 0; i < players.length; i++)
     	{
     		// ***************** FIX ***********************
     		// Needs to allow for score to be added if players tie in # of units
-    		if (max_units < players[i].length)
+    		if (players.length != 0)
     		{
-    			max_player_name = players[i][0].owner;
-    			max_units = players[i].length;
-    		}
+	    		if (max_units < players[i].length)
+	    		{
+	    			max_player_name = players[i][0].owner;
+	    			max_units = players[i].length;
+	    		}
+	    	}
     	}
 
-    	this.Add_Point(max_player_name);
+    	if (max_player_name != undefined)
+    	{
+    		this.Add_Point(max_player_name);
+    	}
 
     };   
 
