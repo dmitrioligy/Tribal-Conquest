@@ -282,10 +282,10 @@ function Game(socket)
     	{
     		// ***************** FIX ***********************
     		// Needs to allow for score to be added if players tie in # of units
-    		if (max_units < players[0].length)
+    		if (max_units < players[i].length)
     		{
-    			max_player_name = players[0][0].owner;
-    			max_units = players[0].length;
+    			max_player_name = players[i][0].owner;
+    			max_units = players[i].length;
     		}
     	}
 
