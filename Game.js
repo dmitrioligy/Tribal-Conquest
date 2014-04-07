@@ -289,7 +289,7 @@ function Game(socket)
     		}
     	}
 
-    	this.Add_Point(max_player);
+    	this.Add_Point(max_player_name);
 
     };   
 
