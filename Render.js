@@ -18,8 +18,8 @@ function Render(game, socket)
 
     function recolorStrokes()
     {
-        for(var i = 0; i < 8; ++i)
-            for(var j = 0; j < (i == 0 ? 7 : 24); ++j)
+        for(var i = 0; i < board.length; ++i)
+            for(var j = 0; j < board[i].length; ++j)
                 if(board[i][j].image)
                 {
                     for(var z = 0; z < game.Player_List.length; ++z)
