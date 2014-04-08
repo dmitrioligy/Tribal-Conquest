@@ -20,19 +20,19 @@ function Render(game, socket)
     function recolorStrokes()
     {
         for(var i = 0; i < 7; ++i)
-            for(var j = 0; j < 24; ++j)
+            for(var j = 0; j < (i == 0 ? 7 : 24); ++j)
                 if(board[i][j].image)
                 {
-                    for(var player in game.playerList)
-                        if(board[i][j].owner == player.Name)
+                    for(var z = 0; z < game.Player_List.length; ++z)
+                        if(board[i][j].owner == game.Player_List[z].Name)
                         {
-                            board[i][j].visual.stroke(strokeColors[player.Index]);
+                            board[i][j].visual.stroke(strokeColors[game.Player_List[z].Index]);
                             board[i][j].visual.strokeWidth(2);
                         }
                 }
                 else
                 {
-                    board[i][j].visual.stroke((i + j) % 2 ? '#C4C4C4' : '#FFFFFF');
+                    board[i][j].visual.stroke('black');
                     board[i][j].visual.strokeWidth(1);
                 }
     }
@@ -521,6 +521,8 @@ function Render(game, socket)
                 }
             }
 
+        recolorStrokes();
+
         for (i = 0; i < 8; i++)
         {
            layer.add(board[0][i].visual);
@@ -530,7 +532,6 @@ function Render(game, socket)
             {
                 layer.add(board[i][j].visual);
             }
-
     }
     drawBoard();
 }
