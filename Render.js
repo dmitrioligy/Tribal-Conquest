@@ -254,6 +254,7 @@ function Render(game, socket)
                     board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
                     board[i][j].visual.off('click');
                     board[i][j].visual.on('click', clickOnUnit);
+                    board[i][j].image.used = true;
                 }
                 else
                 {
@@ -262,9 +263,9 @@ function Render(game, socket)
                     board[i][j] = new Unit(null, null);
                     board[i][j].visual = temp;
                     board[i][j].visual.off('click');
+                    board[unitX][unitY].image.used = true;
                 }
             }
-            board[i][j].image.used = true;
             game.unitsPlayed++;
             recolorStrokes();
             stage.draw();  
