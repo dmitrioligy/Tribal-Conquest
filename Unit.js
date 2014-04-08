@@ -19,7 +19,6 @@ function Unit(Type, Owner)
        // this.attackX
        // this.buff = false
        // this.dead bool
-       // this.used
    // Unit Buff
    	// this.buff = true
    // Unit null

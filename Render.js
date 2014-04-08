@@ -4,11 +4,38 @@ function Render(game, socket)
     // Moving parts of drawBoard (that don't have to be executed everytime) outside
     var board = game.table;
     var width, height, radius, OX, OY;
+
     var images = {};
     images["King"] = 'http://25.media.tumblr.com/2afd2f3d6761fd8afc59f8b7c72f7f53/tumblr_mo50xwuvIn1s8a280o1_1280.png';
     images["Peasant"] = 'http://www.pd4pic.com/images800_/cowboy-farm-farmer-smiley-trident-dung-fork.png';
     images["Ranger"] = 'http://clipartist.info/openclipart.org/SVG/paxed/bow_and_arrow_2-800px.png';
     images["Scout"] = 'http://www.downloadclipart.net/large/159-left-foot-print-design.png';
+
+    var strokeColors = {};
+    strokeColors[0] = 'red';
+    strokeColors[1] = 'blue';
+    strokeColors[2] = 'brown';
+    strokeColors[3] = 'green';
+
+    function recolorStrokes()
+    {
+        for(var i = 0; i < 7; ++i)
+            for(var j = 0; j < 24; ++j)
+                if(board[i][j].image)
+                {
+                    for(var player in game.playerList)
+                        if(board[i][j].owner == player.Name)
+                        {
+                            board[i][j].visual.stroke(strokeColors[player.Index]);
+                            board[i][j].visual.strokeWidth(2);
+                        }
+                }
+                else
+                {
+                    board[i][j].visual.stroke((i + j) % 2 ? '#C4C4C4' : '#FFFFFF');
+                    board[i][j].visual.strokeWidth(1);
+                }
+    }
 
     function makePizza(i) 
     {
@@ -54,6 +81,9 @@ function Render(game, socket)
         game.table[oldX][oldY].visual.fire('click');
         game.table[newX][newY].visual.fire('click');
         game.overrideTurns = false;
+
+        recolorStrokes();
+        stage.draw();
     }
 
     function drawBoard() 
@@ -168,10 +198,11 @@ function Render(game, socket)
             board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
             board[i][j].visual.on('click', clickOnUnit);
             board[i][j].image.used = true;
+
             game.unitsPlayed++;
+            recolorStrokes();
             stage.draw();
             socket.emit('play_a_unit', { oldX: unitX, oldY: unitY, newX: i, newY: j });
-
             if(game.unitsPlayed == 2 && !game.overrideTurns)
             {
                 socket.emit('next_turn');
@@ -234,6 +265,7 @@ function Render(game, socket)
             }
             board[i][j].image.used = true;
             game.unitsPlayed++;
+            recolorStrokes();
             stage.draw();  
             socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
 
@@ -442,8 +474,6 @@ function Render(game, socket)
                     image: imageObj,
                     width: data.w,
                     height: data.h,
-                        filter: Kinetic.Filters.Grayscale, //Step 2
-    filterRadius: 20
                 });
                 board[i][j].visual.on("click", clickOnUnit);
                 board[i][j].image = unit;
