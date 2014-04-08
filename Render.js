@@ -1,4 +1,3 @@
-
 function Render(game, socket) 
 {
     // Moving parts of drawBoard (that don't have to be executed everytime) outside
@@ -175,6 +174,60 @@ function Render(game, socket)
           tooltip.hide();
           layer.add(tooltip);
 
+          // ------------lincolns code **************************************************************************
+        //start &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        function drawMenu()
+        {
+            menu.moveToTop();
+            var title = '       ' + 'Tribal Conquest' + '\n'; // might need to calculate the gap
+            var names = game.Player_List[0].Name + '         ' + game.Player_List[0].Score;
+            numOfPlayers = game.Player_List.length;
+            for(var i=1; i<numOfPlayers; ++i)
+            {
+                names = names + '\n' + game.Player_List[i].Name + '         '  + game.Player_List[i].Score; 
+            }
+            menuText.text(title + names);
+            menuBack.height(menuText.height());
+            menu.show();
+            stage.draw();
+        }
+        
+        // Setting up the Menu
+        var menuWidth = 250;
+        var menuHeight = 250;
+        var menuText = new Kinetic.Text({
+            x: width - menuWidth,
+            y: height - menuHeight,
+            fontSize: 18,
+            fontFamily: 'Calibri',
+            fill: '#000',
+            stroke: 'black',
+            strokeWidth: 1,
+            width: menuWidth - 50,
+            padding: 20,
+            align: 'left',
+          });
+          var menuBack = new Kinetic.Rect({
+            x: width - menuWidth,
+            y: height - menuHeight,
+            stroke: 'black',
+            strokeWidth: 8,
+            fill: '#ddd',
+            width: menuText.width(),
+            height: menuText.height(),
+            cornerRadius: 1
+          });
+          var menu = new Kinetic.Group({
+            draggable: true,
+            opacity: 0.85,
+          });
+          menu.add(menuBack);
+          menu.add(menuText);
+          layer.add(menu);
+          drawMenu();
+        // ------------lincolns code **************************************************************************
+        //end   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
         moveUnit = function(object, unitX, unitY)
         {
             var i = object.getAttr('myX'), j = object.getAttr('myY');
@@ -210,6 +263,7 @@ function Render(game, socket)
                 game.Reset_Used();
                 if(!game.overrideTurns) socket.emit('next_turn');
             }
+            drawMenu();//Lincoln added this ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         }
 
         attackUnit = function(object, unitX, unitY)
@@ -277,6 +331,7 @@ function Render(game, socket)
                 game.Reset_Used();
                 if(!game.overrideTurns) socket.emit('next_turn');
             }
+            drawMenu();//lincoln added this ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         }
 
         clickOnUnit = function()
