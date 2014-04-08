@@ -6,10 +6,10 @@ function Render(game, socket)
     var width, height, radius, OX, OY;
 
     var images = {};
-    images["King"] = 'http://25.media.tumblr.com/2afd2f3d6761fd8afc59f8b7c72f7f53/tumblr_mo50xwuvIn1s8a280o1_1280.png';
+    images["King"]    = 'http://25.media.tumblr.com/2afd2f3d6761fd8afc59f8b7c72f7f53/tumblr_mo50xwuvIn1s8a280o1_1280.png';
     images["Peasant"] = 'http://www.pd4pic.com/images800_/cowboy-farm-farmer-smiley-trident-dung-fork.png';
-    images["Ranger"] = 'http://clipartist.info/openclipart.org/SVG/paxed/bow_and_arrow_2-800px.png';
-    images["Scout"] = 'http://www.downloadclipart.net/large/159-left-foot-print-design.png';
+    images["Ranger"]  = 'http://clipartist.info/openclipart.org/SVG/paxed/bow_and_arrow_2-800px.png';
+    images["Scout"]   = 'http://www.downloadclipart.net/large/159-left-foot-print-design.png';
 
     var strokeColors = {};
     strokeColors[0] = 'red';
@@ -19,7 +19,7 @@ function Render(game, socket)
 
     function recolorStrokes()
     {
-        for(var i = 0; i < 7; ++i)
+        for(var i = 0; i < 8; ++i)
             for(var j = 0; j < (i == 0 ? 7 : 24); ++j)
                 if(board[i][j].image)
                 {
@@ -28,6 +28,8 @@ function Render(game, socket)
                         {
                             board[i][j].visual.stroke(strokeColors[game.Player_List[z].Index]);
                             board[i][j].visual.strokeWidth(2);
+                            board[i][j].visual.moveToTop();
+                            board[i][j].image.moveToTop();
                         }
                 }
                 else
@@ -65,10 +67,10 @@ function Render(game, socket)
     }
 
     // Simulating the client's clicking on a unit and either attacking or moving it
-    this.synchronizeTurn = function(oldX, oldY, newX, newY)
+    this.synchronizeTurn = function(oldX, oldY, newX, newY, owner)
     {
         // Avoiding duplicate moves
-        if(game.Current_Player.Name == game.table[oldX][oldY].owner)
+        if(window.name == owner)
             return;
 
         // Deselecting the previously selected cell
@@ -83,7 +85,6 @@ function Render(game, socket)
         game.overrideTurns = false;
 
         recolorStrokes();
-        stage.draw();
     }
 
     function drawBoard() 
@@ -202,12 +203,12 @@ function Render(game, socket)
             game.unitsPlayed++;
             recolorStrokes();
             stage.draw();
-            socket.emit('play_a_unit', { oldX: unitX, oldY: unitY, newX: i, newY: j });
-            if(game.unitsPlayed == 2 && !game.overrideTurns)
+            socket.emit('play_a_unit', { oldX: unitX, oldY: unitY, newX: i, newY: j, owner: game.Current_Player.Name});
+            if(game.unitsPlayed == 2)
             {
-                socket.emit('next_turn');
                 game.unitsPlayed = 0;
                 game.Reset_Used();
+                if(!game.overrideTurns) socket.emit('next_turn');
             }
         }
 
@@ -267,13 +268,13 @@ function Render(game, socket)
             game.unitsPlayed++;
             recolorStrokes();
             stage.draw();  
-            socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
+            socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j, owner: game.Current_Player.Name});
 
-            if(game.unitsPlayed == 2 && !game.overrideTurns)
+            if(game.unitsPlayed == 2)
             {
-                socket.emit('next_turn');
                 game.unitsPlayed = 0;
                 game.Reset_Used();
+                if(!game.overrideTurns) socket.emit('next_turn');
             }
         }
 
@@ -454,7 +455,11 @@ function Render(game, socket)
 
                 // The loading order of the images is not guaranteed, so we have to count the number of images loaded
                 if(imagesLoaded == totalImages)
-                    stage.add(layer);   
+                {
+                    stage.add(layer);
+                    recolorStrokes();
+                    stage.draw();
+                }
             };
         }
 
@@ -483,7 +488,11 @@ function Render(game, socket)
 
                 // The loading order of the images is not guaranteed, so we have to count the number of images loaded
                 if(imagesLoaded == totalImages)
+                {
                     stage.add(layer);
+                    recolorStrokes();
+                    stage.draw();
+                }
             };
         }
 
@@ -520,8 +529,6 @@ function Render(game, socket)
                     fillRegular(i, j, images[board[i][j].type]);
                 }
             }
-
-        recolorStrokes();
 
         for (i = 0; i < 8; i++)
         {

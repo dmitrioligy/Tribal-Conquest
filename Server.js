@@ -83,7 +83,7 @@ io.sockets.on(
           // client.broadcast.emit sends a message to all other clients
           // to move the piece at the oldLocation to the newLocation
           client.broadcast.emit('sync_client_action', { oldX: message.oldX, oldY: message.oldY,
-            newX: message.newX, newY: message.newY });
+            newX: message.newX, newY: message.newY, owner: message.owner });
         }
       }
     );
