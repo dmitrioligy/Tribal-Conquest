@@ -69,15 +69,10 @@
     	function(message) 
     	{
     		$('#searching_section').css('display', 'none');
-    		game = new Game(socket);
-    		game.Initialize(2);
+    		game = new Game();
+    		game.Initialize(message.allPlayers);
     		render = new Render(game, socket);
-
-    		// Initialize players to the game
-    		for (var i = 0; i < message.allPlayers.length; i++)
-    		{
-    			game.Add_Player(message.allPlayers[i]);
-    		}
+            console.log(game.Player_List);
     	}
     );
 
