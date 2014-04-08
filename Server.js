@@ -17,7 +17,11 @@ var app = require('http').createServer(handler);
 
 var io = require('socket.io').listen(app);
 
+// Local
 app.listen(10001);
+
+// Host
+// app.listen(8000);
 
 function handler (request, response) {
     request.addListener('end', function () {

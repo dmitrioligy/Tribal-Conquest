@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="Game.js"></script>
@@ -15,8 +17,8 @@
 <div id="searching_section">
 	<div id="status"   >Connecting to Tribal Conquest ...</div>
 	Gamer Tag:
-	<input id="name" type="text"></input>
-	<input id="find" type="button" value="Find Game" disabled="true"></input>
+	<input id="name" type="text"/>
+	<input id="find" type="button" value="Find Game" disabled="true"/>
 </div>
 
 <div id="container"></div>
@@ -33,7 +35,12 @@
     
     // Initialize socket.io.
     // document.location.host returns the host of the current page.
+    
+    // Local
     var socket = io.connect('http://' + document.location.host);
+
+    // Hosted
+    // var socket =  io.connect('http://dmitrioligy.kd.io:8000');
 
     // If a welcome message is received, it means the chat room is available.
     // The Log In button will be then enabled.
@@ -155,3 +162,4 @@
 	});
 </script>
 
+</html>
