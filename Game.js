@@ -240,7 +240,7 @@ function Game()
     	// Buff will spawn randomly within range of row 1-4
     	do
     	{
-    		// randomiza location
+    		// randomiz a location
     		var x = Math.floor(Math.random()*4 + 1);
     		var y = Math.floor(Math.random()*24);
 
