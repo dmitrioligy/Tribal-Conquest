@@ -174,57 +174,135 @@ function Render(game, socket)
           tooltip.hide();
           layer.add(tooltip);
 
-          // ------------lincolns code **************************************************************************
+        // ------------lincolns code **************************************************************************
         //start &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        // setting up the menu
+        var numOfPlayers = game.Player_List.length;
         function drawMenu()
         {
             menu.moveToTop();
-            var title = '       ' + 'Tribal Conquest' + '\n'; // might need to calculate the gap
-            var names = game.Player_List[0].Name + '         ' + game.Player_List[0].Score;
-            numOfPlayers = game.Player_List.length;
-            for(var i=1; i<numOfPlayers; ++i)
+            for(var k=0; k< numOfPlayers; ++k)
             {
-                names = names + '\n' + game.Player_List[i].Name + '         '  + game.Player_List[i].Score; 
+                menuScores[k].text(game.Player_List[k].Score);
+                if(game.Player_List[k].Turn)
+                {
+                    menuScores[k].fill('red');
+                    menuNames[k].fill('red');
+                }
+                else
+                {
+                    menuScores[k].fill('black');
+                    menuNames[k].fill('black');
+                }
             }
-            menuText.text(title + names);
-            menuBack.height(menuText.height());
             menu.show();
             stage.draw();
         }
-        
-        // Setting up the Menu
         var menuWidth = 250;
-        var menuHeight = 250;
-        var menuText = new Kinetic.Text({
+        var menuHeight = 150;
+        var menuBackHeight = 0;
+        var menu = new Kinetic.Group({
+            draggable: true,
+            opacity: 0.90,
+        });
+
+        // title on the menu
+        var menuTitle = new Kinetic.Text({
             x: width - menuWidth,
             y: height - menuHeight,
-            fontSize: 18,
+            fontSize: 20,
             fontFamily: 'Calibri',
-            fill: '#000',
+            fontWeight: 'bold',
+            fill: 'black',
             stroke: 'black',
             strokeWidth: 1,
-            width: menuWidth - 50,
+            width: menuWidth,
+            padding: 20,
+            align: 'center'
+        });
+        var title = 'Tribal Conquest';
+        menuTitle.text(title);
+        menuBackHeight += menuTitle.height();
+
+        // first name on the menu
+        var menuNames = new Array(2);
+        menuNames[0] = new Kinetic.Text({
+            x: width - menuWidth,
+            y: menuTitle.y() + menuTitle.height()/2,
+            fontSize: 18,
+            fontFamily: 'Calibri',
+            fill: 'black',
+            width: menuWidth,
             padding: 20,
             align: 'left',
           });
-          var menuBack = new Kinetic.Rect({
+        menuNames[0].text(game.Player_List[0].Name);
+        menuBackHeight += menuNames[0].height();
+
+        // first sccore on the menu
+        var menuScores = new Array(2);
+        menuScores[0] = new Kinetic.Text({
+            x: width - menuWidth/5,
+            y: menuNames[0].y(),
+            fontSize: 18,
+            fontFamily: 'Calibri',
+            fill: 'black',
+            width: menuWidth,
+            padding: 20,
+            align: 'left',
+        });
+
+        // go threough and add all the player names and scores
+        for(var k=1; k< numOfPlayers; k++)
+        {
+            // adds the correct name in the correct spot
+            menuNames[k] = new Kinetic.Text({
+                x: width - menuWidth,
+                y: menuNames[k-1].y() + menuNames[k-1].height()/2,
+                fontSize: 18,
+                fontFamily: 'Calibri',
+                fill: 'black',
+                width: menuWidth - 50,
+                padding: 20,
+                align: 'left',
+            });
+            menuNames[k].text(game.Player_List[k].Name);
+            menuBackHeight += menuNames[k].height();
+
+            // adds the score in the correct location
+            menuScores[k] = new Kinetic.Text({
+                x: width - menuWidth/5,
+                y: menuNames[k].y(),
+                fontSize: 18,
+                fontFamily: 'Calibri',
+                fill: 'black',
+                width: menuWidth,
+                padding: 20,
+                align: 'left',
+            });
+        }
+
+        // the background of the menu
+        var menuBack = new Kinetic.Rect({
             x: width - menuWidth,
             y: height - menuHeight,
             stroke: 'black',
             strokeWidth: 8,
             fill: '#ddd',
-            width: menuText.width(),
-            height: menuText.height(),
+            width: menuWidth,
+            height: menuBackHeight,
             cornerRadius: 1
-          });
-          var menu = new Kinetic.Group({
-            draggable: true,
-            opacity: 0.85,
-          });
-          menu.add(menuBack);
-          menu.add(menuText);
-          layer.add(menu);
-          drawMenu();
+        });
+
+        menu.add(menuBack);
+        menu.add(menuTitle);
+        for(var k=0; k<numOfPlayers; k++)
+        {
+            menu.add(menuNames[k]);
+            menu.add(menuScores[k]);
+        }
+        layer.add(menu);
+        drawMenu();
         // ------------lincolns code **************************************************************************
         //end   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
