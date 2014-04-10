@@ -176,136 +176,150 @@ function Render(game, socket)
 
         // ------------lincolns code **************************************************************************
         //start &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-        // setting up the menu
+        // setting up the scoreBoard
         var numOfPlayers = game.Player_List.length;
-        function drawMenu()
+        function drawScoreBoard()
         {
-            menu.moveToTop();
+            scoreBoard.moveToTop();
             for(var k=0; k< numOfPlayers; ++k)
             {
-                menuScores[k].text(game.Player_List[k].Score);
+                // update each players score
+                scoreBoardScores[k].text(game.Player_List[k].Score);
                 if(game.Player_List[k].Turn)
                 {
-                    menuScores[k].fill('red');
-                    menuNames[k].fill('red');
-                }
-                else
-                {
-                    menuScores[k].fill('black');
-                    menuNames[k].fill('black');
+                    // update the now playing section
+                    scoreBoardPlaying.text(scoreBoardPlayingTxt + game.Player_List[k].Name);
+                    scoreBoardPlaying.fill(strokeColors[k]);
                 }
             }
-            menu.show();
             stage.draw();
         }
-        var menuWidth = 250;
-        var menuHeight = 150;
-        var menuBackHeight = 0;
-        var menu = new Kinetic.Group({
+        // create the score board object
+        var scoreBoardWidth = 250;
+        var scoreBoardHeight = 150;
+        var scoreBoardBackHeight = 0;
+        var scoreBoard = new Kinetic.Group({
             draggable: true,
             opacity: 0.90,
         });
 
-        // title on the menu
-        var menuTitle = new Kinetic.Text({
-            x: width - menuWidth,
-            y: height - menuHeight,
+        // title on the scoreBoard
+        var scoreBoardTitle = new Kinetic.Text({
+            x: width - scoreBoardWidth,
+            y: height - scoreBoardHeight,
             fontSize: 20,
             fontFamily: 'Calibri',
             fontWeight: 'bold',
             fill: 'black',
             stroke: 'black',
             strokeWidth: 1,
-            width: menuWidth,
+            width: scoreBoardWidth,
             padding: 20,
             align: 'center'
         });
         var title = 'Tribal Conquest';
-        menuTitle.text(title);
-        menuBackHeight += menuTitle.height();
+        scoreBoardTitle.text(title);
+        scoreBoardBackHeight += scoreBoardTitle.height();
 
-        // first name on the menu
-        var menuNames = new Array(2);
-        menuNames[0] = new Kinetic.Text({
-            x: width - menuWidth,
-            y: menuTitle.y() + menuTitle.height()/2,
+        // first name on the scoreBoard
+        var scoreBoardNames = new Array(2);
+        scoreBoardNames[0] = new Kinetic.Text({
+            x: width - scoreBoardWidth,
+            y: scoreBoardTitle.y() + scoreBoardTitle.height()/2,
             fontSize: 18,
             fontFamily: 'Calibri',
-            fill: 'black',
-            width: menuWidth,
+            fill: strokeColors[0],
+            width: scoreBoardWidth,
             padding: 20,
             align: 'left',
           });
-        menuNames[0].text(game.Player_List[0].Name);
-        menuBackHeight += menuNames[0].height();
+        scoreBoardNames[0].text(game.Player_List[0].Name);
+        scoreBoardBackHeight += scoreBoardNames[0].height()/2;
 
-        // first sccore on the menu
-        var menuScores = new Array(2);
-        menuScores[0] = new Kinetic.Text({
-            x: width - menuWidth/5,
-            y: menuNames[0].y(),
+        // first sccore on the scoreBoard
+        var scoreBoardScores = new Array(2);
+        scoreBoardScores[0] = new Kinetic.Text({
+            x: width - scoreBoardWidth/5,
+            y: scoreBoardNames[0].y(),
             fontSize: 18,
             fontFamily: 'Calibri',
-            fill: 'black',
-            width: menuWidth,
+            fill: strokeColors[0],
+            width: scoreBoardWidth,
             padding: 20,
             align: 'left',
         });
 
-        // go threough and add all the player names and scores
+        // go threough and add all the  other players' names and scores'
         for(var k=1; k< numOfPlayers; k++)
         {
             // adds the correct name in the correct spot
-            menuNames[k] = new Kinetic.Text({
-                x: width - menuWidth,
-                y: menuNames[k-1].y() + menuNames[k-1].height()/2,
+            scoreBoardNames[k] = new Kinetic.Text({
+                x: width - scoreBoardWidth,
+                y: scoreBoardNames[k-1].y() + scoreBoardNames[k-1].height()/2,
                 fontSize: 18,
                 fontFamily: 'Calibri',
-                fill: 'black',
-                width: menuWidth - 50,
+                fill: strokeColors[k],
+                width: scoreBoardWidth - 50,
                 padding: 20,
                 align: 'left',
             });
-            menuNames[k].text(game.Player_List[k].Name);
-            menuBackHeight += menuNames[k].height();
+            scoreBoardNames[k].text(game.Player_List[k].Name);
+            scoreBoardBackHeight += scoreBoardNames[k].height()/2;
 
             // adds the score in the correct location
-            menuScores[k] = new Kinetic.Text({
-                x: width - menuWidth/5,
-                y: menuNames[k].y(),
+            scoreBoardScores[k] = new Kinetic.Text({
+                x: width - scoreBoardWidth/5,
+                y: scoreBoardNames[k].y(),
                 fontSize: 18,
                 fontFamily: 'Calibri',
-                fill: 'black',
-                width: menuWidth,
+                fill: strokeColors[k],
+                width: scoreBoardWidth,
                 padding: 20,
                 align: 'left',
             });
         }
 
-        // the background of the menu
-        var menuBack = new Kinetic.Rect({
-            x: width - menuWidth,
-            y: height - menuHeight,
+        // create the now playing section
+        var scoreBoardPlayingTxt = 'Now Playing: ';
+        var scoreBoardPlaying = new Kinetic.Text({
+            x: width - scoreBoardWidth,
+            y: scoreBoardNames[scoreBoardNames.length-1].y() + scoreBoardNames[scoreBoardNames.length-1].height()/2,
+            fontSize: 20,
+            fontFamily: 'Calibri',
+            fontWeight: 'bold',
+            fill: 'red',
+            width: scoreBoardWidth,
+            padding: 20,
+            align: 'center'
+        });
+        scoreBoardPlaying.text(scoreBoardPlayingTxt + game.Player_List[0].Name);
+        scoreBoardBackHeight += scoreBoardPlaying.height()/2;
+
+        // the background of the scoreBoard
+        var scoreBoardBack = new Kinetic.Rect({
+            x: width - scoreBoardWidth,
+            y: height - scoreBoardHeight,
             stroke: 'black',
             strokeWidth: 8,
             fill: '#ddd',
-            width: menuWidth,
-            height: menuBackHeight,
+            width: scoreBoardWidth,
+            height: scoreBoardBackHeight,
             cornerRadius: 1
         });
 
-        menu.add(menuBack);
-        menu.add(menuTitle);
+        scoreBoard.add(scoreBoardBack);
+        scoreBoard.add(scoreBoardTitle);
         for(var k=0; k<numOfPlayers; k++)
         {
-            menu.add(menuNames[k]);
-            menu.add(menuScores[k]);
+            scoreBoard.add(scoreBoardNames[k]);
+            scoreBoard.add(scoreBoardScores[k]);
         }
-        layer.add(menu);
-        drawMenu();
+        scoreBoard.add(scoreBoardPlaying);
+        layer.add(scoreBoard);
+        drawScoreBoard();
         // ------------lincolns code **************************************************************************
         //end   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
+        
         moveUnit = function(object, unitX, unitY)
         {
             var i = object.getAttr('myX'), j = object.getAttr('myY');
@@ -341,7 +355,7 @@ function Render(game, socket)
                 game.Reset_Used();
                 if(!game.overrideTurns) socket.emit('next_turn');
             }
-            drawMenu();//Lincoln added this ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            drawScoreBoard();//Lincoln added this ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         }
 
         attackUnit = function(object, unitX, unitY)
@@ -409,7 +423,7 @@ function Render(game, socket)
                 game.Reset_Used();
                 if(!game.overrideTurns) socket.emit('next_turn');
             }
-            drawMenu();//lincoln added this ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            drawScoreBoard();//lincoln added this ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         }
 
         clickOnUnit = function()
