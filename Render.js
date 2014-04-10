@@ -5,10 +5,10 @@ function Render(game, socket)
     var width, height, radius, OX, OY;
 
     var images = {};
-    images["King"]    = 'http://25.media.tumblr.com/2afd2f3d6761fd8afc59f8b7c72f7f53/tumblr_mo50xwuvIn1s8a280o1_1280.png';
-    images["Peasant"] = 'http://www.pd4pic.com/images800_/cowboy-farm-farmer-smiley-trident-dung-fork.png';
-    images["Ranger"]  = 'http://clipartist.info/openclipart.org/SVG/paxed/bow_and_arrow_2-800px.png';
-    images["Scout"]   = 'http://www.downloadclipart.net/large/159-left-foot-print-design.png';
+    images["King"]    = 'king.png';
+    images["Peasant"] = 'peasant.png';
+    images["Ranger"]  = 'ranger.png';
+    images["Scout"]   = 'scout.png';
 
     var strokeColors = {};
     strokeColors[0] = 'red';
