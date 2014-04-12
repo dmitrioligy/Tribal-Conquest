@@ -18,7 +18,7 @@ var app = require('http').createServer(handler);
 var io = require('socket.io').listen(app);
 
 // Local
-app.listen(10001);
+app.listen(8000);
 
 // Host
 // app.listen(8000);
@@ -63,9 +63,9 @@ io.sockets.on(
           client.set('player_number', numOfPlayers);
           client.set('turn_number', 0);
           client.emit('searching','Searching for game...');
-          if(numOfPlayers > 1)
+          if( numOfPlayers == message.num_players )
           {
-      		io.sockets.emit('start_game', {allPlayers : players});
+      		  io.sockets.emit('start_game', {allPlayers : players});
           }
         }
         // When something is wrong, send a find_failed message to the client.

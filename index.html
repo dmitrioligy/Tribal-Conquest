@@ -15,10 +15,14 @@
 </div>
 
 <div id="searching_section">
-	<div id="status"   >Connecting to Tribal Conquest ...</div>
-	Gamer Tag:
+	<div id="status"> Connecting to Tribal Conquest ...</div>
+	Gamer Tag: 
 	<input id="name" type="text"/>
 	<input id="find" type="button" value="Find Game" disabled="true"/>
+
+    <br>
+    Number of Players: 
+    <input id="num_players" type="text"/>
 </div>
 
 <div id="container"></div>
@@ -27,6 +31,7 @@
   // $(document).ready(fn) tells jQuery to call function 'fn' after the whole
   // document is loaded.
   var name = "";
+  var num_players = "";
   $(document).ready(function() {
     // Hide the warning section and show the login section.
     $('#warning').css('display', 'none');
@@ -79,8 +84,7 @@
     		game = new Game();
     		game.Initialize(message.allPlayers);
     		render = new Render(game, socket);
-            console.log(game.Player_List);
-    	}
+     	}
     );
 
 
@@ -90,18 +94,6 @@
     	function() 
     	{
     		$('#status').text('Failed to find a game!');
-    	}
-    );
-
-
-    // Listen for new player added
-    socket.on
-    (
-    	'add_player',
-    	function(new_player) 
-    	{
-    		// Add a player to clients game
-           	game.Add_Player(new_player.name);
     	}
     );
 
@@ -133,12 +125,15 @@
     	function() 
 	    {
 	    	name = $('#name').val();
+            num_players = $('#num_players').val();
 	    	if (name) 
 	    	{
 	    		name = name.trim();
-	    		if (name.length > 0) 
+                num_players = num_players.trim();
+	    		if ( name.length > 0) 
 	    		{
-	    			socket.emit('find_game', { player_name: name });
+	    			socket.emit('find_game', { player_name: name,
+                                                num_players: num_players } );
 	    		}
 	    	}
 		      // Clear the input field.

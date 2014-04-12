@@ -56,69 +56,54 @@ function Game()
     // Create all the units based on # of players
     this.Initialize = function (players)
     {
-    	var numOfPlayers = players.length;
-    	for(var i=0; i<numOfPlayers; ++i)
+    	for(var i = 0; i < players.length; i++)
     	{
     		this.Player_List[i] = {Name: players[i], Score: 0, Index: i, Turn: false};
     	}
+
+    	// Define who begins first when game begins
     	this.Player_List[0].Turn = true;
     	this.Player_List.Turn = 0;
     	this.Current_Player = this.Player_List[0];
+
+
+    	var P1_Start, P2_Start, P3_Start, P4_Start;
+    	var Row_Start = 5;
         // Based on numbers of players create units
         switch(players.length)
         {
         	// Functional Prototype only has 2 players option
         	case 2: 
-           	// starting_point is location where units will be generated
-				// relative to
+				P1_Start = 7; 
+				P2_Start = 19;				
+				break;
+			case 3:
+				P1_Start = 3; 
+				P2_Start = 11;
+				P3_Start = 19;
+				break;
+			case 4:
 				P1_Start = 7; 
 				P2_Start = 19;
-				Row_Start = 5;
-				// PLAYER 1 //
-				//-------------------Peasant------------------
-				this.table[Row_Start][P1_Start - 2] = new Unit("Peasant", this.Player_List[0].Name);
-				this.table[Row_Start][P1_Start -  1] = new Unit("Peasant", this.Player_List[0].Name);
-				this.table[Row_Start + 1][P1_Start - 3] = new Unit("Peasant", this.Player_List[0].Name);
-				this.table[Row_Start + 1][P1_Start] = new Unit("Peasant", this.Player_List[0].Name);
-				this.table[Row_Start + 2][P1_Start - 3] = new Unit("Peasant", this.Player_List[0].Name);
-				this.table[Row_Start + 2][P1_Start] = new Unit("Peasant", this.Player_List[0].Name);
-
-				//--------------------Scout--------------------
-				this.table[Row_Start][P1_Start - 3] = new Unit("Scout", this.Player_List[0].Name);
-				this.table[Row_Start][P1_Start] = new Unit("Scout", this.Player_List[0].Name);
-
-				//--------------------King--------------------
-				this.table[Row_Start + 2][P1_Start - 2] = new Unit("King", this.Player_List[0].Name);
-				//--------------------Ranger--------------------
-				this.table[Row_Start + 2][P1_Start - 1] = new Unit("Ranger", this.Player_List[0].Name);
-				this.table[Row_Start + 1][P1_Start - 2] = new Unit("Ranger", this.Player_List[0].Name);
-				this.table[Row_Start + 1][P1_Start - 1] = new Unit("Ranger", this.Player_List[0].Name);
-
-				// PLAYER 2 //
-				//-------------------Peasant------------------
-				this.table[Row_Start][P2_Start - 2] = new Unit("Peasant", this.Player_List[1].Name);
-				this.table[Row_Start][P2_Start -  1] = new Unit("Peasant", this.Player_List[1].Name);
-				this.table[Row_Start + 1][P2_Start - 3] = new Unit("Peasant", this.Player_List[1].Name);
-				this.table[Row_Start + 1][P2_Start] = new Unit("Peasant", this.Player_List[1].Name);
-				this.table[Row_Start + 2][P2_Start - 3] = new Unit("Peasant", this.Player_List[1].Name);
-				this.table[Row_Start + 2][P2_Start] = new Unit("Peasant", this.Player_List[1].Name);
-
-				//--------------------Scout--------------------
-				this.table[Row_Start][P2_Start - 3] = new Unit("Scout", this.Player_List[1].Name);
-				this.table[Row_Start][P2_Start] = new Unit("Scout", this.Player_List[1].Name);
-
-				//--------------------King--------------------
-				this.table[Row_Start + 2][P2_Start - 2] = new Unit("King", this.Player_List[1].Name);
-				//--------------------Ranger--------------------
-				this.table[Row_Start + 2][P2_Start - 1] = new Unit("Ranger", this.Player_List[1].Name);
-				this.table[Row_Start + 1][P2_Start - 2] = new Unit("Ranger", this.Player_List[1].Name);
-				this.table[Row_Start + 1][P2_Start - 1] = new Unit("Ranger", this.Player_List[1].Name);
+				P3_Start = 13;
+				P4_Start = 1;
 				break;
-
-				default:
-				// -- stuff
+			default:
+				// Do nothing
 				break;
-			}
+		}
+
+		// Initialize Units based on Start locations found in switch
+		this.Initialize_Units(Row_Start, P1_Start, this.Player_List[0]);
+		this.Initialize_Units(Row_Start, P2_Start, this.Player_List[1]);
+		if (players.length > 2)
+		{
+			this.Initialize_Units(Row_Start, P3_Start, this.Player_List[2]);
+		}
+		if (players.length > 3)
+		{
+			this.Initialize_Units(Row_Start, P4_Start, this.Player_List[3]);
+   		}
    	};
 
 	//this.Add_Player = function(name)
@@ -158,21 +143,21 @@ function Game()
 				break;
 			case this.Player_List[1].Name:
 				this.Player_List[1].Score = this.Player_List[1].Score + 1;
-				if (this.Player_List[0].Score == 10)
+				if (this.Player_List[1].Score == 10)
 				{
 					this.Game_Over(this.Player_List[0].Name);
 				}
 				break;
 			case this.Player_List[2].Name:
 				this.Player_List[2].Score = this.Player_List[2].Score + 1;
-				if (this.Player_List[0].Score == 10)
+				if (this.Player_List[1].Score == 10)
 				{
 					this.Game_Over(this.Player_List[0].Name);
 				}
 				break;
 			case this.Player_List[3].Name:
 				this.Player_List[3].Score = this.Player_List[3].Score + 1;
-				if (this.Player_List[0].Score == 10)
+				if (this.Player_List[1].Score == 10)
 				{
 					this.Game_Over(this.Player_List[0].Name);
 				}
@@ -183,7 +168,7 @@ function Game()
 
 	};
 
-	this.Gane_Over =  function(player)
+	this.Gane_Over = function(player)
 	{
 		// Clear Board
 		// player is the winner
@@ -346,4 +331,34 @@ function Game()
     	}
     };
 
+}
+
+// Function to initialize units based on number of players
+Game.prototype.Initialize_Units = function(row_start, player_start, player)
+{
+	var player_name = player.Name;
+	// Column 1 (CCW)
+	this.table[row_start][player_start] = new Unit("Scout", player_name);
+	this.table[row_start + 1][player_start] = new Unit("Peasant", player_name);
+	this.table[row_start + 2][player_start] = new Unit("Peasant", player_name);
+	
+	// Column 2
+	this.table[row_start][player_start -  1] = new Unit("Peasant", player_name);
+	this.table[row_start + 1][player_start - 1] = new Unit("Ranger", player_name);	
+	this.table[row_start + 2][player_start - 1] = new Unit("Ranger", player_name);	
+
+	// Column 3
+	// if table wraps around
+	if ( player.Index == 3 )
+	{
+		player_start = 25;
+	}
+	this.table[row_start][player_start - 2] = new Unit("Peasant", player_name);
+	this.table[row_start + 1][player_start - 2] = new Unit("Ranger", player_name);
+	this.table[row_start + 2][player_start - 2] = new Unit("King", player_name);
+
+	// Column 4
+	this.table[row_start][player_start - 3] = new Unit("Scout", player_name);
+	this.table[row_start + 1][player_start - 3] = new Unit("Peasant", player_name);
+	this.table[row_start + 2][player_start - 3] = new Unit("Peasant", player_name);	
 }
