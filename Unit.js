@@ -57,6 +57,7 @@ function Unit(Type, Owner)
 		   	this.attackPlus = 1;
 		   	this.attackX = 1;
 		   	this.buff =  0;
+		   	this.isRanged = false;
 	   		break;
 	   	case "Scout":
 		   	this.dmg = 1;
@@ -86,6 +87,7 @@ function Unit(Type, Owner)
 		   	this.attackPlus = 1;
 		   	this.attackX = 1;
 		   	this.buff = 0;
+		   	this.isRanged = false;
 	   		break;
 	   	case "Rez":
 	   		this.buff = 1;
@@ -115,6 +117,7 @@ function Unit(Type, Owner)
 		this.buff = Unit.buff;
 		this.owner = Unit.owner;
 		this.type = Unit.type;
+		this.isRanged = Unit.isRanged;
 	}
 
 	// Make the unit null
@@ -131,14 +134,16 @@ function Unit(Type, Owner)
 		delete this.dead;
 		delete this.owner;
 		delete this.image.used;
+		delete this.isRanged;
 	}
 
 	this.Take_Damage = function(damage)
 	{
 		this.hp = this.hp - damage;
 		
-		if (this.hp == 0)
+		if (this.hp <= 0)
 		{
+			this.hp == 0;
 			this.dead = true;
 		}
 	};
