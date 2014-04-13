@@ -13,29 +13,33 @@ function Render(game, socket)
     var strokeColors = {};
     strokeColors[0] = 'red';
     strokeColors[1] = 'blue';
-    strokeColors[2] = 'brown';
+    strokeColors[2] = 'yellow';
     strokeColors[3] = 'green';
 
     function recolorStrokes()
     {
         for(var i = 0; i < board.length; ++i)
+        {
             for(var j = 0; j < board[i].length; ++j)
-                if(board[i][j].image)
+            {
+                for(var z = 0; z < game.Player_List.length; ++z)
                 {
-                    for(var z = 0; z < game.Player_List.length; ++z)
-                        if(board[i][j].owner == game.Player_List[z].Name)
-                        {
-                            board[i][j].visual.stroke(strokeColors[game.Player_List[z].Index]);
-                            board[i][j].visual.strokeWidth(2);
-                            board[i][j].visual.moveToTop();
-                            board[i][j].image.moveToTop();
-                        }
+                    if(board[i][j].owner == game.Player_List[z].Name)
+                    {
+                        board[i][j].visual.stroke(strokeColors[game.Player_List[z].Index]);
+                        board[i][j].visual.strokeWidth(2);
+                        board[i][j].visual.moveToTop();
+                        if(board[i][j].image) board[i][j].image.moveToTop();
+                        break;
+                    }
+                    else
+                    {
+                        board[i][j].visual.stroke('black');
+                        board[i][j].visual.strokeWidth(1);
+                    }
                 }
-                else
-                {
-                    board[i][j].visual.stroke('black');
-                    board[i][j].visual.strokeWidth(1);
-                }
+            }
+        }
     }
 
     function makePizza(i) 
@@ -66,6 +70,7 @@ function Render(game, socket)
     }
 
     // Simulating the client's clicking on a unit and either attacking or moving it
+    var serverSays = false;
     this.synchronizeTurn = function(oldX, oldY, newX, newY, owner)
     {
         // Avoiding duplicate moves
@@ -78,10 +83,10 @@ function Render(game, socket)
 
         // We want to override turn restrictions when the server is trying to move the units
         // for every single player
-        game.overrideTurns = true;
+        serverSays = true;
         game.table[oldX][oldY].visual.fire('click');
         game.table[newX][newY].visual.fire('click');
-        game.overrideTurns = false;
+        serverSays = false;
 
         recolorStrokes();
     }
@@ -327,35 +332,37 @@ function Render(game, socket)
             // Deselect unit
             board[unitX][unitY].visual.fire('click');
 
-            // Move unit to the clicked cell (in the database) and remove it from the previous
-            var temp = board[i][j].visual;
-            var temp2 = board[unitX][unitY].visual;
-            board[i][j] = board[unitX][unitY];
-            board[i][j].visual = temp;
+            // get graphical info before the game changes
+            var temp = board[i][j].image;
 
-            board[unitX][unitY] = new Unit(null, null);
-            board[unitX][unitY].visual = temp2;
-            board[unitX][unitY].visual.off('click');
-
-            // Actually move the unit graphically
-            var data = calcImageData(i, j);
-            board[i][j].image.setPosition({x: data.x, y: data.y});
-            board[i][j].image.setSize({width: data.w, height: data.h});
-            board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
-            board[i][j].visual.on('click', clickOnUnit);
-            board[i][j].image.used = true;
-
-            game.unitsPlayed++;
-            recolorStrokes();
-            stage.draw();
-            socket.emit('play_a_unit', { oldX: unitX, oldY: unitY, newX: i, newY: j, owner: game.Current_Player.Name});
-            if(game.unitsPlayed == 2)
+            // tell the game to move the units, if possible
+            if( game.Move(unitX, unitY, i, j) )
             {
-                game.unitsPlayed = 0;
-                game.Reset_Used();
-                if(!game.overrideTurns) socket.emit('next_turn');
+                // move the unit graphically
+                board[i][j].image = board[unitX][unitY].image;
+                board[unitX][unitY].image = temp;
+                board[unitX][unitY].visual.off('click');
+
+                // resize the image to fit the new cell
+                var data = calcImageData(i, j);
+                board[i][j].image.setPosition({x: data.x, y: data.y});
+                board[i][j].image.setSize({width: data.w, height: data.h});
+                board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
+                board[i][j].visual.on('click', clickOnUnit);
+
+                if( !serverSays )
+                {
+                    socket.emit('play_a_unit', { oldX: unitX, oldY: unitY, newX: i, newY: j });   
+                }
+
+                // update the board
+                recolorStrokes();
+                drawScoreBoard();
+                stage.draw();
+                // save the last played
+                lastPlayed[0] = i;
+                lastPlayed[1] = j;
             }
-            drawScoreBoard();//Lincoln added this ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         }
 
         attackUnit = function(object, unitX, unitY)
@@ -365,66 +372,65 @@ function Render(game, socket)
             // Deselect unit
             board[unitX][unitY].visual.fire('click');
 
-            // Inflict damage
-            board[i][j].hp -= board[unitX][unitY].dmg;
+            // get info before board chagnes
+            var attackRanged = board[unitX][unitY].isRanged;
+            var attacker = board[unitX][unitY].owner;
+            var defenderName = board[i][j].owner;
+            var temp = board[i][j].visual;
 
-            // What to do if the unit dies:
-            var isDead = board[i][j].hp <= 0;
-            if(isDead)
+            // tell the game to attack, if possible
+            if( game.Attack(unitX, unitY, i, j) )
             {
-                // Move the attacked unit to the graveyard
-                var graveIndex = game.dead_container.length;
-                game.dead_container[graveIndex] = board[i][j];
-                var graveyardScale = calcImageData(7, 0);
-                board[i][j].image.setSize({width: graveyardScale.w, height: graveyardScale.h});
-                board[i][j].image.setPosition({x: radius + graveIndex*2*radius, y: radius}); //TODO calculate numbers
-                board[i][j].visual.off('click');
-
-                if(!board[unitX][unitY].isRanged) // If the unit is melee
+                // set the last played now, might be changed if unit dies && attack is melee
+                lastPlayed[0] = unitX;
+                lastPlayed[1] = unitY;
+                // test to see if the unit died
+                if( board[i][j].owner != defenderName )
                 {
-                    // Move the attacker to the clicked cell (in the database) overwriting the dead unit
-                    var temp = board[i][j].visual;
-                    var temp2 = board[unitX][unitY].visual;
-                    board[i][j] = board[unitX][unitY];
-                    board[i][j].visual = temp;
-
-                    // Remove the attacker from its original position
-                    board[unitX][unitY] = new Unit(null, null);
-                    board[unitX][unitY].visual = temp2;
-                    board[unitX][unitY].visual.off('click');
-
-                    // Actually move the unit graphically
-                    var data = calcImageData(i, j);
-                    board[i][j].image.setPosition({x: data.x, y: data.y});
-                    board[i][j].image.setSize({width: data.w, height: data.h});
-                    board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
+                    // move the image to the graveyard
+                    var holder = board[unitX][unitY].image;
+                    var graveIndex  = game.dead_container.length-1;
+                    var graveScale = calcImageData(7,0);
+                    board[i][j].image.setSize({width: graveScale.w, height: graveScale.h});
+                    board[i][j].image.setPosition({x: radius + graveIndex*2*radius, y: radius}); //TODO calculate numbers
                     board[i][j].visual.off('click');
-                    board[i][j].visual.on('click', clickOnUnit);
-                    board[i][j].image.used = true;
+
+                    // if the attack was a melee
+                    if( !attackRanged )
+                    {
+                        // clear the old cell
+                        board[unitX][unitY].visual.off('click');
+                        board[unitX][unitY].image = undefined;
+
+                        // move the attacker's image to the defenders cell
+                        board[i][j].image = holder;
+                        var data = calcImageData(i, j);
+                        board[i][j].image.setPosition({x: data.x, y: data.y});
+                        board[i][j].image.setSize({width: data.w, height: data.h});
+                        board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
+                        board[i][j].visual = temp;
+                        board[i][j].visual.off('click');
+                        board[i][j].visual.on('click', clickOnUnit);
+
+                        // changed the lastPlayed to the new location
+                        lastPlayed[0] = i;
+                        lastPlayed[1] = j;
+                    }
                 }
-                else
+                // if the server didn't call this function, send to server
+                if(!serverSays)
                 {
-                    // Remove the dead unit from its cell
-                    var temp = board[i][j].visual;
-                    board[i][j] = new Unit(null, null);
-                    board[i][j].visual = temp;
-                    board[i][j].visual.off('click');
-                    board[unitX][unitY].image.used = true;
+                    socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
                 }
+                recolorStrokes();
+                drawScoreBoard();
+                stage.draw();
             }
-            game.unitsPlayed++;
-            recolorStrokes();
-            stage.draw();  
-            socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j, owner: game.Current_Player.Name});
-
-            if(game.unitsPlayed == 2)
-            {
-                game.unitsPlayed = 0;
-                game.Reset_Used();
-                if(!game.overrideTurns) socket.emit('next_turn');
-            }
-            drawScoreBoard();//lincoln added this ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         }
+
+        var lastPlayed = new Array(2);
+        lastPlayed[0] = 0;
+        lastPlayed[1] = 0;
 
         clickOnUnit = function()
         {
@@ -438,10 +444,10 @@ function Render(game, socket)
             board[i][j].visual.fill("#3399FF");
             board[i][j].visual.off('click');
             board[i][j].visual.on("click", clickOnHighlightedUnit);
-            if(game.overrideTurns || (
+            if(serverSays || (
                                         game.Current_Player.Name == board[i][j].owner && 
                                         window.name == game.Current_Player.Name && 
-                                        !board[i][j].image.used
+                                        !(lastPlayed[0] == i && lastPlayed[1] == j)
                                      ))
             {
                 //Highlighting the cells which the unit can move to and attaching proper event handlers to them
