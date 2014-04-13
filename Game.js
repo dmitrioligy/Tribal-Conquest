@@ -58,12 +58,12 @@ function Game()
     {
     	for(var i = 0; i < players.length; i++)
     	{
-    		this.Player_List[i] = {Name: players[i], Score: 0, Index: i, Turn: false};
+    		this.Player_List[i] = {Name: players[i], Score: 0, Index: i, Turn: false, Played: 0};
     	}
 
     	// Define who begins first when game begins
     	this.Player_List[0].Turn = true;
-    	this.Player_List.Turn = 0;
+    	this.Player_List.Playing = 0;
     	this.Current_Player = this.Player_List[0];
 
 
@@ -177,29 +177,20 @@ function Game()
 	// Currently player which can make moves/attacks
 	this.Next_Turn = function()
 	{
-		// Disable current players turn priveledge
-		this.Player_List[this.Player_List.Turn].Turn = false;
-
-		// If turn == max players, cycle back to 0 position of turn
-		if (this.Player_List.Turn == (this.Player_List.length - 1) )
+		++this.Player_List[this.Player_List.Playing].Played;
+		if( this.Player_List[this.Player_List.Playing].Played >= 2 )
 		{
-			// Check middle for scores
-			this.Middle_Check();
-
-			this.Player_List.Turn = 0;
+			this.Player_List[this.Player_List.Playing].Played = 0;
+			this.Player_List[this.Player_List.Playing].Turn = false;
+			++this.Player_List.Playing;
+			if( this.Player_List.Playing >= this.Player_List.length )
+			{
+				this.Player_List.Playing = 0;
+				this.Middle_Check();
+			}
+			this.Player_List[this.Player_List.Playing].Turn = true;
+			this.Current_Player = this.Player_List[this.Player_List.Playing];
 		}
-
-		// else increment turn to next player
-		else
-		{
-			this.Player_List.Turn++;
-		}
-
-		// Set Current player one who has the turn available
-		this.Current_Player = this.Player_List[this.Player_List.Turn];
-
-		// Enable their turn value
-		this.Player_List[this.Player_List.Turn].Turn = true;
 	};
 
 	// The amount of time a player has for their turn
@@ -296,25 +287,26 @@ function Game()
 			}
     	}
 
-    	var max_player_name;
+    	var max_player_names = new Array(0);
     	var max_units = 0;
     	for ( var i = 0; i < players.length; i++)
     	{
     		// ***************** FIX ***********************
     		// Needs to allow for score to be added if players tie in # of units
-    		if (players.length != 0)
+    		if (max_units < players[i].length)
     		{
-	    		if (max_units < players[i].length)
-	    		{
-	    			max_player_name = players[i][0].owner;
-	    			max_units = players[i].length;
-	    		}
-	    	}
+    			max_player_names = new Array(1);
+    			max_player_names[0] = players[i][0].owner;
+    			max_units = players[i].length;
+    		}
+    		else if (max_units == players[i].length && max_units > 0)
+    		{
+    			max_player_names[1] = players[i][0].owner;
+    		}
     	}
-
-    	if (max_player_name != undefined)
+    	for(var i=0; i<max_player_names.length; i++)
     	{
-    		this.Add_Point(max_player_name);
+    		this.Add_Point(max_player_names[i]);
     	}
 
     };   
