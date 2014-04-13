@@ -10,25 +10,35 @@ Game.prototype.Attack = function (attackX, attackY, defX, defY)
 {
 	// takes in the this attacking unit's x, attacking unit's y, 
 	// defending unit's x, defending unit's y and 
-	if(this.table[attackX][attackY].owner != this.table[defX][defY].owner)
+	var attacker = this.table[attackX][attackY];
+	var defender = this.table[defX][defY];
+	// if the attacker is playing, &&
+	// both units are not owned by the same person
+	if( attacker.owner == this.Player_List[this.Player_List.Playing].Name &&
+		attacker.owner != defender.owner )
 	{
-		var attacker = this.table[attackX][attackY];
 		this.table[defX][defY].Take_Damage(attacker.dmg);
 
 		if(this.table[defX][defY].dead == true)
 		{
-			// copy type and owner stats
-			var owner = this.table[defX][defY].owner;
-			var type =  this.table[defX][defY].type;
-
-			// Empty unit 
-			this.table[defX][defY].Empty();
-
 			// Place dead units type/ownership into dead container
-			var dead_unit =  new Unit(type, owner);
+			var dead_unit =  new Unit(defender.type, defender.owner);
 			dead_unit.dead = true;
 			this.dead_container.push(dead_unit);
+
+			if( attacker.isRanged )
+			{
+				// Empty unit 
+				this.table[defX][defY].Empty();
+			}
+			else
+			{
+				this.table[defX][defY].Copy_Stats(attacker);
+				this.table[attackX][attackY].Empty();
+			}
 		}
+		this.Next_Turn();
+		return true;
 	}
 };
 
@@ -48,6 +58,9 @@ Game.prototype.Move = function ( oldX, oldY, newX, newY)
 	this.table[newX][newY].Copy_Stats(unit_moving);
 	// old location is reset
 	this.table[oldX][oldY].Empty();
+	//update turn
+	this.Next_Turn();
+	return true;
 };
 
 // lincoln's code ------------------------------------------------------------------
