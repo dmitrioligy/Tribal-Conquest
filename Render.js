@@ -584,40 +584,7 @@ function Render(game, socket)
             }
         }
 
-        function fillPizza(i, src) 
-        {
-            var imageObj = new Image();
-            imageObj.src = src;
-            var data = calcImageData(0, i);
-            imageObj.onload = function () {
-                var unit = new Kinetic.Image({
-                    x: data.x,
-                    y: data.y,
-                    offset: {
-                        x: data.w/2,
-                        y: data.h/2
-                    },
-                    image: imageObj,
-                    width: data.w,
-                    height: data.h,
-                });
-                board[0][i].visual.on("click", clickOnUnit);
-                board[0][i].image = unit;
-                unit.setListening(false);
-                layer.add(unit);
-                imagesLoaded++;
-
-                // The loading order of the images is not guaranteed, so we have to count the number of images loaded
-                if(imagesLoaded == totalImages)
-                {
-                    stage.add(layer);
-                    recolorStrokes();
-                    stage.draw();
-                }
-            };
-        }
-
-        function fillRegular(i, j, src)
+        function fillImage(i, j, src)
         {
             var imageObj = new Image();
             imageObj.src = src;
@@ -659,11 +626,6 @@ function Render(game, socket)
                 myX: 0,
                 myY: i,
             });
-            if(board[0][i].type != undefined)
-            {
-                totalImages++;
-                fillPizza(i, images[board[0][i].type]);
-            }
         }
 
         for (i = 1; i < 8; i++)
@@ -680,7 +642,7 @@ function Render(game, socket)
                 if(board[i][j].type != undefined)
                 {
                     totalImages++;
-                    fillRegular(i, j, images[board[i][j].type]);
+                    fillImage(i, j, images[board[i][j].type]);
                 }
             }
 
