@@ -129,20 +129,6 @@ function Render(game, socket)
 
         var layer = new Kinetic.Layer();
 
-        function drawTooltip(i, j)
-        {
-            tooltip.moveToTop();
-            tooltipText.text(
-                'Type: ' + board[i][j].type + '\n' +
-                'Damage: ' + board[i][j].dmg + '\n' +
-                'Health Points: ' + board[i][j].hp + '\n' +
-                'Owner: ' + board[i][j].owner
-            );
-            tooltipBack.height(tooltipText.height());
-            tooltip.show();
-            stage.draw();
-        }
-
         // Setting up the tooltip
         var ttwidth = 250;
         var ttheight = 250;
@@ -164,10 +150,11 @@ function Render(game, socket)
             fill: '#ddd',
             width: tooltipText.width(),
             height: tooltipText.height(),
-            shadowColor: 'black',
-            shadowBlur: 10,
-            shadowOffset: {x:10,y:10},
-            shadowOpacity: 0.2,
+            // Huge performance increase by commenting shadow
+            // shadowColor: 'black',
+            // shadowBlur: 10,
+            // shadowOffset: {x:10,y:10},
+            // shadowOpacity: 0.2,
             cornerRadius: 10
           });
           var tooltip = new Kinetic.Group({
@@ -178,6 +165,20 @@ function Render(game, socket)
           tooltip.add(tooltipText);
           tooltip.hide();
           layer.add(tooltip);
+
+        function drawTooltip(i, j)
+        {
+            tooltip.moveToTop();
+            tooltipText.text(
+                'Type: ' + board[i][j].type + '\n' +
+                'Damage: ' + board[i][j].dmg + '\n' +
+                'Health Points: ' + board[i][j].hp + '\n' +
+                'Owner: ' + board[i][j].owner
+            );
+            tooltipBack.height(tooltipText.height());
+            tooltip.show();
+            stage.draw();
+        }
 
         // ------------lincolns code **************************************************************************
         //start &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
