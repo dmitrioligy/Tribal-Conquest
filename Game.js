@@ -11,7 +11,7 @@ function Game()
        // this.dead_container
        // this.table[x][y] is a array of array of Units - refer to Unit class
        // this.Player_List - array of players
-
+       // this.Max_Score
        // this.Current_Player
 
     // Methods
@@ -28,6 +28,7 @@ function Game()
 
     // Game Members decleration
     this.Player_List = [];
+    this.Max_Score = 0;
     Array.prototype.Turn = null;
     this.dead_container = [];
     
@@ -92,7 +93,7 @@ function Game()
 				// Do nothing
 				break;
 		}
-
+ 
 		// Initialize Units based on Start locations found in switch
 		this.Initialize_Units(Row_Start, P1_Start, this.Player_List[0]);
 		this.Initialize_Units(Row_Start, P2_Start, this.Player_List[1]);
@@ -106,27 +107,6 @@ function Game()
    		}
    	};
 
-	//this.Add_Player = function(name)
-	//{
-	//	console.log(name);
-	//	// Add a single player to the game
-	//   	if (this.Player_List.length < 4)
-	//   	{	   	
-	//   		var new_player = { Score: 0, Name: name, Index: null };	   
-	//   		new_player["Index"] = this.Player_List[this.Player_List.length-1];
-	//   		this.Player_List.push(new_player);
-	//   	}
-	//   	
-	//   	// If the player added was #1 player, they take the first turn
-	//   	if (this.Player_List.length == 1)
-	//   	{
-	//   		// Set Player_List member Turn = to index 0;
-	//   		this.Player_List.Turn = 0;
-	//   		this.Player_List[0].Turn = true;
-	//   		this.Current_Player = this.Player_List[0];
-	//   	}
-	//   	console.log(this.Player_List[0].Name);
-	//};
 
 	// Score one point to a player
 	this.Add_Point = function(player_name)
@@ -135,44 +115,94 @@ function Game()
 		switch(player_name)
 		{
 			case this.Player_List[0].Name:
+
+				// Increment Score
 				this.Player_List[0].Score = this.Player_List[0].Score + 1;
-				if (this.Player_List[0].Score == 10)
+
+				// If reached max points, game over
+				if (this.Player_List[0].Score == this.Max_Score)
 				{
-					this.Game_Over(this.Player_List[0].Name);
+					// if my name == winner, display win screen
+					if (window.name == this.Player_List[0].Name)
+					{
+						Render.Win(window.name);
+					}
+					// if my name != winner, display lose screen
+					else
+					{
+						Render.Lose(window.name);
+					}
 				}
 				break;
+
 			case this.Player_List[1].Name:
+
+				// Increment Score
 				this.Player_List[1].Score = this.Player_List[1].Score + 1;
-				if (this.Player_List[1].Score == 10)
+				
+				// If reached max points, game over
+				if (this.Player_List[1].Score == this.Max_Score)
 				{
-					this.Game_Over(this.Player_List[0].Name);
+					// if my name == winner, display win screen
+					if (window.name == this.Player_List[1].Name)
+					{
+						Render.Win(window.name);
+					}
+					// if my name != winner, display lose screen
+					else
+					{
+						Render.Lose(window.name);
+					}
 				}
 				break;
 			case this.Player_List[2].Name:
+
+				// Increment Score
 				this.Player_List[2].Score = this.Player_List[2].Score + 1;
-				if (this.Player_List[1].Score == 10)
+			
+				// If reached max points, game over
+				if (this.Player_List[2].Score == this.Max_Score)
 				{
-					this.Game_Over(this.Player_List[0].Name);
+					// if my name == winner, display win screen
+					if (window.name == this.Player_List[2].Name)
+					{
+						Render.Win(window.name);
+					}
+					// if my name != winner, display lose screen
+					else
+					{
+						Render.Lose(window.name);
+					}
 				}
 				break;
+
 			case this.Player_List[3].Name:
+
+				// Increment Score
 				this.Player_List[3].Score = this.Player_List[3].Score + 1;
-				if (this.Player_List[1].Score == 10)
+
+				// If reached max points, game over
+				if (this.Player_List[3].Score == this.Max_Score)
 				{
-					this.Game_Over(this.Player_List[0].Name);
+					// if my name == winner, display win screen
+					if (window.name == this.Player_List[3].Name)
+					{
+						Render.Win(window.name);
+					}
+					// if my name != winner, display lose screen
+					else
+					{
+						Render.Lose(window.name);
+					}
 				}
 				break;
+
 			default:
 				break;
 		}
 
 	};
 
-	this.Gane_Over = function(player)
-	{
-		// Clear Board
-		// player is the winner
-	}
 
 	// Currently player which can make moves/attacks
 	this.Next_Turn = function()
