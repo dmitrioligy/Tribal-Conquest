@@ -107,27 +107,6 @@ function Game()
    		}
    	};
 
-	//this.Add_Player = function(name)
-	//{
-	//	console.log(name);
-	//	// Add a single player to the game
-	//   	if (this.Player_List.length < 4)
-	//   	{	   	
-	//   		var new_player = { Score: 0, Name: name, Index: null };	   
-	//   		new_player["Index"] = this.Player_List[this.Player_List.length-1];
-	//   		this.Player_List.push(new_player);
-	//   	}
-	//   	
-	//   	// If the player added was #1 player, they take the first turn
-	//   	if (this.Player_List.length == 1)
-	//   	{
-	//   		// Set Player_List member Turn = to index 0;
-	//   		this.Player_List.Turn = 0;
-	//   		this.Player_List[0].Turn = true;
-	//   		this.Current_Player = this.Player_List[0];
-	//   	}
-	//   	console.log(this.Player_List[0].Name);
-	//};
 
 	// Score one point to a player
 	this.Add_Point = function(player_name)
