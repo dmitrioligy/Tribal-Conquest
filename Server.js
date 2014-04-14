@@ -6,6 +6,10 @@ var fs = require('fs')
 // Number of players
 var numOfPlayers = 0;
 
+// Hosts choice of total # of players in game
+var host_players_size = 0;
+var host_max_score = 0;
+
 //array of player names
 var players = new Array(0);
 
@@ -18,7 +22,7 @@ var app = require('http').createServer(handler);
 var io = require('socket.io').listen(app);
 
 // Local
-app.listen(8000);
+app.listen(8000); 
 
 // Host
 // app.listen(8000);
@@ -43,13 +47,17 @@ function handler (request, response) {
 io.sockets.on(
   'connection',
   function(client) {
+
     // Send a welcome message first.
-    client.emit('welcome', 'Welcome to Tribal Conquest');
+    client.emit
+    (
+      'welcome', {welcome: 'Welcome to Tribal Conquest', numOfPlayers: numOfPlayers}
+    );
 
     // Listen to an event called 'find_game'. The client should emit this event when
     // it wants to find a game
     client.on(
-      'find_game',
+      'find_game', 
       function(message) 
       {
         // This function extracts the player name from the find_game message, stores
@@ -57,17 +65,27 @@ io.sockets.on(
         // starts the game if there are more than 1 players waiting
         if (message && message.player_name) 
         {
+          // Host declares number of players in game
+          if (numOfPlayers == 0)
+          {
+            host_players_size = message.num_players;
+            host_max_score = message.max_score;
+          }
+
           players[numOfPlayers] = message.player_name;
           numOfPlayers++;
           client.set('player_name', message.player_name);
           client.set('player_number', numOfPlayers);
           client.set('turn_number', 0);
           client.emit('searching','Searching for game...');
-          if( numOfPlayers == message.num_players )
+
+          if( numOfPlayers == host_players_size )
           {
-      		  io.sockets.emit('start_game', {allPlayers : players});
+      		  io.sockets.emit('start_game', {allPlayers : players, 
+                                            max_score: host_max_score});
           }
         }
+
         // When something is wrong, send a find_failed message to the client.
         else {
           client.emit('failed_find_game');//might want to add sending the numOfPlayers & playerNumber
