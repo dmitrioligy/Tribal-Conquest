@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 
 <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -8,8 +9,23 @@
 <script src="Move-Attack.js"></script>
 <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.min.js"></script>
 
+<head>
+  <meta charset="utf-8" />
+  <title> Fullscreen Div </title>
+  <style>
+  .overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: rgba(51,51,51,0.7);
+    pointer-events:none;
+  }
+  </style>
+</head>
 
-
+<body>
 <div id="warning">
 	JavaScript is required to run this app.
 </div>
@@ -25,7 +41,7 @@
     <input id="num_players" type="text"/>
 </div>
 
-<div id="container"></div>
+<div id="container" class="overlay"></div>
 <script>
   // $(document) returns a jQuery object representing the whole document (page).
   // $(document).ready(fn) tells jQuery to call function 'fn' after the whole
@@ -156,5 +172,5 @@
 	    
 	});
 </script>
-
+</body>
 </html>

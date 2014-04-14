@@ -104,11 +104,8 @@ function Render(game, socket)
         var stage = new Kinetic.Stage({
             container: 'container',
             width: width,
-            height: height
+            height: height,
         });
-
-        game.unitsPlayed = 0;
-        game.overrideTurns = false;
 
         function resizeThings() 
         {
@@ -255,7 +252,7 @@ function Render(game, socket)
             align: 'left',
         });
 
-        // go threough and add all the  other players' names and scores'
+        // go through and add all other the players' names and scores'
         for(var k=1; k< numOfPlayers; k++)
         {
             // adds the correct name in the correct spot
