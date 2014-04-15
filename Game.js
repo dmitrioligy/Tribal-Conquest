@@ -86,8 +86,8 @@ function Game()
 				break;
 			case 4:
 				P1_Start = 7; 
-				P2_Start = 19;
-				P3_Start = 13;
+				P2_Start = 13;
+				P3_Start = 19;
 				P4_Start = 1;
 				break;
 			default:
@@ -163,7 +163,7 @@ function Game()
 				break;
 
 			default:
-				break;
+				 break;
 		}
 
 	};
@@ -182,11 +182,25 @@ function Game()
 			{
 				this.Player_List.Playing = 0;
 				this.Middle_Check();
+				this.Test_Win();
 			}
 			this.Player_List[this.Player_List.Playing].Turn = true;
 			this.Current_Player = this.Player_List[this.Player_List.Playing];
 		}
 	};
+
+	// test to see who won, and end the game
+	this.Test_Win = function()
+	{
+		for(var i=0; i<this.Player_List.length; i++)
+		{
+			if(this.Player_List[i].Score >= this.Max_Score)
+			{
+				console.log(this.Max_Score);
+				this.Winners[this.Winners.length] = this.Player_List[i].Name;
+			}
+		}
+	}
 
 	// The amount of time a player has for their turn
 	this.Player_Timer = function()
@@ -203,32 +217,36 @@ function Game()
 	this.RandomBuff = function()
 	{
     	// Randomize buff to be generated
-    	var buffs = ["Damage", "Health", "Speed", "Rez"];
-    	var buff_indx = Math.floor(Math.random()*4);
-
-    	var repeat = false;
+    	var buffs = ["Damage", "Health", "Speed"]; //need to add rez
+    	var buff_indx = Math.floor(Math.random()*buffs.length);
 
     	// Buff will spawn randomly within range of row 1-4
-    	do
+    	while(true)
     	{
     		// randomiz a location
-    		var x = Math.floor(Math.random()*4 + 1);
+    		var x = Math.floor(Math.random()*buffs.length + 1);
     		var y = Math.floor(Math.random()*24);
 
     		// if location is empty place buff
-    		if (this.table[x][y] != null)
+    		if (this.table[x][y].type == null || this.table[x][y] == undefined)
     		{
-    			this.table[x][y] = new Unit( buffs[buff_indx] );
-    			repeat = false;
+    			//this.Add_Buff( buffs[buff_indx], x, y );
+    			var end = new Array(0);
+    			end[0] = buffs[buff_indx];
+    			end[1] = x;
+    			end[2] = y;
+    			return end;
     		}
+    	}
+    };
 
-    		// not empty, try new coordinates
-    		else
-    		{	
-    			repeat =  true;
-    		}
-
-    	} while(repeat == true)
+    // actually adds the buff to the game
+    this.Add_Buff = function(buffName, buffX, buffY)
+    {
+    	if(!this.table[buffX][buffY].type)
+    	{
+    		this.table[buffX][buffY] = new Unit(buffName);
+    	}
     };
 
     // Prints the table as a text to see stats
