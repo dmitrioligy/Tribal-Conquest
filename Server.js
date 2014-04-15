@@ -2,13 +2,18 @@
 // Allows access to local file system.
 var fs = require('fs')
 
-
 // Number of players
 var numOfPlayers = 0;
+
+// number of connected people
+var connected = 0;
 
 // Hosts choice of total # of players in game
 var host_players_size = 0;
 var host_max_score = 0;
+
+// First player to join
+var host_options = false;
 
 //array of player names
 var players = new Array(0);
@@ -47,12 +52,53 @@ function handler (request, response) {
 io.sockets.on(
   'connection',
   function(client) {
+    connected++; 
 
-    // Send a welcome message first.
+    // if a disconnect occurs
+    client.on
+    (
+        'disconnect',
+        function()
+        {
+          console.log("Disconnect");
+          connected--;
+
+          if ( (numOfPlayers > connected) || (connected <= 1) )
+          {
+            // Restart Server Information
+            numOfPlayers = 0;
+            players.length = 0;
+            connected = 0;
+            host_options = false;
+
+            // Make players restart their page
+            io.sockets.emit
+            (
+              'someone_disconnected'
+            );
+
+          }
+        }
+    )
+
+
+    // Welcome Message, host options to 1st person to connect
     client.emit
     (
-      'welcome', {welcome: 'Welcome to Tribal Conquest', numOfPlayers: numOfPlayers}
+      'welcome', {welcome: 'Welcome to Tribal Conquest',
+                   host_options: host_options}
     );
+
+    // 1st player responds with host_found to disable host options to other players
+    client.on
+    (
+      'host_found',
+      function()
+      {
+          host_options = true;
+      }
+    );
+
 
     // Listen to an event called 'find_game'. The client should emit this event when
     // it wants to find a game
@@ -79,6 +125,7 @@ io.sockets.on(
           client.set('turn_number', 0);
           client.emit('searching','Searching for game...');
 
+          // if Number of players matches host's game size => start game
           if( numOfPlayers == host_players_size )
           {
       		  io.sockets.emit('start_game', {allPlayers : players, 
