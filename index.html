@@ -104,7 +104,7 @@
         <br>Max Score to Win:
         <br>
         <form action="">
-        <input id="max_score" name='score' type="radio" value="10" />10 Points
+        <input id="max_score" name='score' type="radio" value="1" />1 Points
             <br>
         <input id="max_score" name='score' type="radio" value="15" />15 Points
             <br>
@@ -264,6 +264,7 @@
                     // Is there a someone in the winning container?
                     if(game.winners.length > 0)
                     {
+                        console.log("SOMEONE WON");
                         // Hide board
                         $('#container').css('display', 'none');
 
