@@ -4,7 +4,7 @@
 *
 **********************/
 
-function Unit(Type, Owner)
+function Unit(newType, newOwner)
 {
    // Members
    	// 3 Types of units
@@ -32,22 +32,22 @@ function Unit(Type, Owner)
        // Empty       
 
    // Health Constants
-   var PeasantHP = 2;
-   var ScoutHP = 1;
-   var RangerHP = 1;
-   var KingHP = 2;
+   var peasantHP = 2;
+   var scoutHP = 1;
+   var rangerHP = 1;
+   var kingHP = 2;
 
    // Create a Unit
-   this.type = Type;
+   this.type = newType;
 
-    if (Type != null)
+    if (newType != null)
     {
-   	 	this.owner = Owner;
+   	 	this.owner = newOwner;
     	this.dead = false;
     	this.used = false;
     }
 
-   	switch(Type)
+   	switch(newType)
    	{
 	   	case "Peasant":
 		   	this.dmg = 1;
@@ -56,7 +56,7 @@ function Unit(Type, Owner)
 		   	this.moveX = 1;
 		   	this.attackPlus = 1;
 		   	this.attackX = 1;
-		   	this.buff =  0;
+		   	this.buff =  false;
 		   	this.isRanged = false;
 	   		break;
 	   	case "Scout":
@@ -66,7 +66,7 @@ function Unit(Type, Owner)
 		   	this.moveX = 0;
 		   	this.attackPlus = 0;
 		   	this.attackX = 2;
-		   	this.buff = 0;
+		   	this.buff = false;
 		   	this.isRanged = true;
 		   	break;
 	   	case "Ranger":
@@ -76,7 +76,7 @@ function Unit(Type, Owner)
 		   	this.moveX = 2;
 		   	this.attackPlus = 3;
 		   	this.attackX = 3;
-		   	this.buff = 0;
+		   	this.buff = false;
 		   	this.isRanged = true;
 		   	break;
 	   	case "King":
@@ -86,38 +86,38 @@ function Unit(Type, Owner)
 		   	this.moveX = 1;
 		   	this.attackPlus = 1;
 		   	this.attackX = 1;
-		   	this.buff = 0;
+		   	this.buff = false;
 		   	this.isRanged = false;
 	   		break;
 	   	case "Rez":
-	   		this.buff = 1;
+	   		this.buff = true;
 	   		break;
 	   	case "Damage":
-	   		this.buff = 1;
+	   		this.buff = true;
 	   		break;
 	   	case "Speed":
-	  	 	this.buff = 1;
+	  	 	this.buff = true;
 	   		break;
 	   	case "Health":
-	  	 	this.buff = 1;
+	  	 	this.buff = true;
 	  	 	break;
 	   	default:
 	 	  	break;
     }
 
-	this.CopyStats = function(Unit)
+	this.CopyStats = function(newUnit)
 	{
-		this.dmg = Unit.dmg;
-		this.hp = Unit.hp;
-		this.movePlus = Unit.movePlus;
-		this.moveX = Unit.moveX;
-		this.attackPlus = Unit.attackPlus;
-		this.attackX = Unit.attackX;
-		this.dead = Unit.dead;
-		this.buff = Unit.buff;
-		this.owner = Unit.owner;
-		this.type = Unit.type;
-		this.isRanged = Unit.isRanged;
+		this.dmg = newUnit.dmg;
+		this.hp = newUnit.hp;
+		this.movePlus = newUnit.movePlus;
+		this.moveX = newUnit.moveX;
+		this.attackPlus = newUnit.attackPlus;
+		this.attackX = newUnit.attackX;
+		this.dead = newUnit.dead;
+		this.buff = newUnit.buff;
+		this.owner = newUnit.owner;
+		this.type = newUnit.type;
+		this.isRanged = newUnit.isRanged;
 	}
 
 	// Make the unit null
@@ -153,13 +153,13 @@ function Unit(Type, Owner)
 	{
 		switch(buff.type)
 		{
-			case "Rez":
-				// Click Event on Graveyard
-				// place unit on row 7 , checking columns 5,4,6,3,7,2,8
-				// to place the unit down
-				// generate new Unit with data baed on dead_unit clicked data
-				// dead_unit.pop() that clicked on unit.
-				break;
+			//case "Rez":
+			//	// Click Event on Graveyard
+			//	// place unit on row 7 , checking columns 5,4,6,3,7,2,8
+			//	// to place the unit down
+			//	// generate new Unit with data baed on dead_unit clicked data
+			//	// dead_unit.pop() that clicked on unit.
+			//	break;
 
 			case "Damage":
 				this.dmg = this.dmg*2;
