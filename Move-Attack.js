@@ -50,7 +50,7 @@ Game.prototype.Move = function (oldX, oldY, newX, newY)
     // if newLoc is buff, apply buff
     if (newLoc.buff == true)
     {
-        unitMoving.ApplyBuff(newLoc.type);
+        unitMoving.ApplyBuff(newLoc);
     }
 
     // unit moves to location
