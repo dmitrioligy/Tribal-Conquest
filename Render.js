@@ -1,12 +1,18 @@
 function Render(game, socket) 
 {
+
+    // Moving parts of drawBoard (that don't have to be executed everytime) outside
     var board = game.table;
+    var width, height, radius, OX, OY;
 
     var images = {};
     images["King"]    = 'king.png';
     images["Peasant"] = 'peasant.png';
     images["Ranger"]  = 'ranger.png';
     images["Scout"]   = 'scout.png';
+    images["Damage"]  = 'Damage.png';
+    images["Health"]  = 'Health.png';
+    images["Speed"]   = 'Speed.png';
 
     var strokeColors = {};
     strokeColors[0] = 'red';
@@ -98,9 +104,49 @@ function Render(game, socket)
         game.table[newX][newY].visual.fire('click');
         serverSays = false;
 
+        if(window.name == game.Player_List[0].Name && game.Player_List[0].Turn)
+        {
+            var newBuff = game.RandomBuff();
+            socket.emit('synch_buff', { buffName: newBuff[0], buffX: newBuff[1], buffY: newBuff[2] });
+        }
+
         recolorStrokes();
     }
-    
+
+    this.synchronizeBuff = function( buffName, buffX, buffY)
+    {
+        // save graphical info before board is changed
+        var temp = board[buffX][buffY].visual;
+        // add the buff to the game
+        game.Add_Buff( buffName, buffX, buffY);
+
+        // put the buff on the screen
+        // will change this (below) to a function &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        var imageObj = new Image();
+            imageObj.src = images[buffName];
+            var data = calcImageData(buffX, buffY);
+            imageObj.onload = function () {
+                var unit = new Kinetic.Image({
+                    x: data.x,
+                    y: data.y,
+                    offset: {
+                        x: data.w/2,
+                        y: data.h/2
+                    },
+                    image: imageObj,
+                    width: data.w,
+                    height: data.h,
+                });
+                board[buffX][buffY].visual.on("click", clickOnUnit);
+                board[buffX][buffY].image = unit;
+                unit.setListening(false);
+                layer.add(unit);
+            layer.draw();
+        }
+        // will change this (above) to a function &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        board[buffX][buffY].visual = temp;
+    }
+
     function recolorStrokes()
     {
         for(var i = 0; i < board.length; ++i)
