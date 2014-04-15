@@ -156,203 +156,208 @@
 
 <!-- Socket.io Connecting section -->
 <script>
-  // $(document) returns a jQuery object representing the whole document (page).
-  // $(document).ready(fn) tells jQuery to call function 'fn' after the whole
-  // document is loaded.
-  var name = "";
-  var numPlayers = "";
-  var maxScore = "";
-  $(document).ready(function() {
-    // Hide the warning section and show the login section.
-    $('#warning').css('display', 'none');
-    $('#searching_section').css('display', 'block');
-    $('#game').css('display', 'none');
-    $('#host').css('display', 'none'); // hide host options
-    
-    // Initialize socket.io.
-    // document.location.host returns the host of the current page.
-    
-    // Local
-    var socket = io.connect('http://' + document.location.host);
+    // $(document) returns a jQuery object representing the whole document (page).
+    // $(document).ready(fn) tells jQuery to call function 'fn' after the whole
+    // document is loaded.
+    var name = "";
+    var numPlayers = "";
+    var maxScore = "";
 
-    // Hosted
-    // var socket =  io.connect('http://dmitrioligy.kd.io:8000');
-
-    // If a welcome message is received, it means the chat room is available.
-    // The Log In button will be then enabled.
-    socket.on
+    $(document).ready
     (
-    	'welcome',
-    	function(message) 
-    	{
-    		$('#status').text(message.welcome);
-    		$('#find').attr('disabled', false);
-            $('#disconnect').css('display', 'none');
-
-            if (message.hostOptions == false)
-            {
-                // Display host options, report to server that host is found
-                $('#host').css('display', 'block');
-
-                // if host options are not set, do not say host found
-                socket.emit('host_found');
-            }
-        }
-    );
-
-
-    // if someone disconnects, reload other users pages
-    socket.on
-    (
-        'someone_disconnected',
         function() 
         {
-            console.log("in client disconnect socket");
-            $('#container').css('display', 'none'); 
-            $('#disconnect').css('display', 'block');
-        }
-    );
+            // Hide the warning section and show the login section.
+            $('#warning').css('display', 'none');
+            $('#searching_section').css('display', 'block');
+            $('#game').css('display', 'none');
+            $('#host').css('display', 'none'); // hide host options
 
+            // Initialize socket.io.
+            // document.location.host returns the host of the current page.
 
-    socket.on
-    (
-    	'searching',
-    	function(message)
-    	{
-    		$('#status').text(message);
-    		$('#find').attr('disabled', true);
-    		$('#find').attr('visible', false);
-    		document.getElementById('find').style.visibility = 'hidden';  
-    	}
-    );
+            // Local
+            var socket = io.connect('http://' + document.location.host);
 
+            // Hosted
+            // var socket =  io.connect('http://dmitrioligy.kd.io:8000');
 
-    // Start Game Initialization
-    var game, render;
-    socket.on
-    (
-    	'start_game',
-    	function(message) 
-    	{  
-            // Hide search section. Start game, pass playerlist and max_score.
-            // Render the display of the game
-    		$('#searching_section').css('display', 'none');
-            $('#container').css('display', 'block');
-    		game = new Game();
-            Game.maxScore = message.maxScore;
-    		game.Initialize(message.allPlayers);
-    		render = new Render(game, socket);
+            // If a welcome message is received, it means the chat room is available.
+            // The Log In button will be then enabled.
+            socket.on
+            (
+            	'welcome',
+            	function(message) 
+            	{
+            		$('#status').text(message.welcome);
+            		$('#find').attr('disabled', false);
+                    $('#disconnect').css('display', 'none');
 
-     	}
-    );
-
-
-    socket.on
-    (
-    	'failed_find_game',
-    	function()
-    	{
-    		$('#status').text('Failed to find a game!');
-    	}
-    );
-
-    // Sync player move/attack
-    socket.on
-    (
-    	'sync_client_action',
-    	function(message) 
-    	{
-    		// Simulating the clicks on other clients 
-           	render.SynchronizeTurn(message.oldX, message.oldY, message.newX, message.newY, message.owner);
-    	}
-    );
-
-    // Perform next turn for client
-    socket.on
-    (
-    	'next_turn',
-    	function()
-    	{
-            // Increment Game Turn
-    		game.NextTurn();
-
-            // Is there a someone in the winning container?
-            if (game.winners.length > 0)
-            {
-                // Hide board
-                $('#container').css('display', 'none');
-
-                // Is current client in winniers list?
-                var has_won;
-                for(var i = 0; i < game.winners.length; i++)
-                {
-                    // Display win screen for client
-                    if (game.winners[i] == window.name)
+                    if (message.hostOptions == false)
                     {
-                        $('#win').css('display', 'block');
-                        has_won = true;
-                        break;
+                        // Display host options, report to server that host is found
+                        $('#host').css('display', 'block');
+
+                        // if host options are not set, do not say host found
+                        socket.emit('host_found');
                     }
                 }
+            );
 
-                // If not in winning list, display lose screen
-                if (has_won == false)
+
+            // if someone disconnects, reload other users pages
+            socket.on
+            (
+                'someone_disconnected',
+                function() 
                 {
-                    $('#lost').css('display', 'block');   
+                    console.log("in client disconnect socket");
+                    $('#container').css('display', 'none'); 
+                    $('#disconnect').css('display', 'block');
                 }
-            }
-    	}
-    // sync the buff that was generated by the host
-    socket.on
-    (
-      'synch_buff',
-      function(message)
-      { 
-        if( message )
-        {
-          // send the new buff to everyone
-          render.SynchronizeBuff(message.buffName, message.buffX, message.buffY);
+            );
+
+
+            socket.on
+            (
+            	'searching',
+            	function(message)
+            	{
+            		$('#status').text(message);
+            		$('#find').attr('disabled', true);
+            		$('#find').attr('visible', false);
+            		document.getElementById('find').style.visibility = 'hidden';  
+            	}
+            );
+
+
+            // Start Game Initialization
+            var game, render;
+            socket.on
+            (
+            	'start_game',
+            	function(message) 
+            	{  
+                    // Hide search section. Start game, pass playerlist and max_score.
+                    // Render the display of the game
+            		$('#searching_section').css('display', 'none');
+                    $('#container').css('display', 'block');
+            		game = new Game();
+                    Game.maxScore = message.maxScore;
+            		game.Initialize(message.allPlayers);
+            		render = new Render(game, socket);
+
+             	}
+            );
+
+
+            socket.on
+            (
+            	'failed_find_game',
+            	function()
+            	{
+            		$('#status').text('Failed to find a game!');
+            	}
+            );
+
+            // Sync player move/attack
+            socket.on
+            (
+            	'sync_client_action',
+            	function(message) 
+            	{
+            		// Simulating the clicks on other clients 
+                   	render.SynchronizeTurn(message.oldX, message.oldY, message.newX, message.newY, message.owner);
+            	}
+            );
+
+            // Perform next turn for client
+            socket.on
+            (
+            	'next_turn',
+            	function()
+            	{
+                    // Increment Game Turn
+            		game.NextTurn();
+
+                    // Is there a someone in the winning container?
+                    if (game.winners.length > 0)
+                    {
+                        // Hide board
+                        $('#container').css('display', 'none');
+
+                        // Is current client in winniers list?
+                        var has_won;
+                        for(var i = 0; i < game.winners.length; i++)
+                        {
+                            // Display win screen for client
+                            if (game.winners[i] == window.name)
+                            {
+                                $('#win').css('display', 'block');
+                                has_won = true;
+                                break;
+                            }
+                        }
+
+                        // If not in winning list, display lose screen
+                        if (has_won == false)
+                        {
+                            $('#lost').css('display', 'block');   
+                        }
+                    }
+            	}
+            );
+
+            // sync the buff that was generated by the host
+            socket.on
+            (
+                'synch_buff',
+                function(message)
+                { 
+                    if( message )
+                    {
+                        // send the new buff to everyone
+                        render.SynchronizeBuff(message.buffName, message.buffX, message.buffY);
+                    }
+                }
+            );
+
+
+            $('#find').click
+            (
+            	function() 
+                {
+                	name = $('#name').val();
+                    numPlayers = $('#num_players').val();
+                    maxScore = $('#max_score').val();
+                	if (name) 
+                	{
+                		name = name.trim();
+                        numPlayers = numPlayers.trim();
+                        maxScore = maxScore.trim();
+                		if ( name.length > 0) 
+                		{
+                			socket.emit('find_game', { playerName: name,
+                                                        numPlayers: numPlayers,
+                                                        maxScore: maxScore } );
+                		}
+                	}
+            	      // Clear the input field.
+            	}
+            );
+
+            // When Enter is pressed in the name field, it should be treated as clicking
+            // on the Log In button.
+            $('#name').keyup
+            (
+                function(event) 
+                {
+                	if (event.keyCode == 13) 
+                	{
+                		$('#find').click();
+                	}
+                }
+            );   
         }
-      }
     );
-
-
-    $('#find').click
-    (
-    	function() 
-	    {
-	    	name = $('#name').val();
-            numPlayers = $('#num_players').val();
-            maxScore = $('#max_score').val();
-	    	if (name) 
-	    	{
-	    		name = name.trim();
-                numPlayers = numPlayers.trim();
-                maxScore = maxScore.trim();
-	    		if ( name.length > 0) 
-	    		{
-	    			socket.emit('find_game', { playerName: name,
-                                                numPlayers: numPlayers,
-                                                maxScore: maxScore } );
-	    		}
-	    	}
-		      // Clear the input field.
-		}
-	);
-
-    // When Enter is pressed in the name field, it should be treated as clicking
-    // on the Log In button.
-    $('#name').keyup
-    (
-	    function(event) 
-	    {
-	    	if (event.keyCode == 13) 
-	    	{
-	    		$('#find').click();
-	    	}
-	    }
-	);
-
-	    
-	});
 </script>
