@@ -18,16 +18,16 @@ function Render(game, socket)
     strokeColors[3] = 'green';
 
     var playerIndex;
-    for (var z = 0; z < game.playerList.length; ++z)
+    for(var z = 0; z < game.playerList.length; ++z)
     {
-        if (window.name == game.playerList[z].Name)
+        if(window.name == game.playerList[z].Name)
         {
             playerIndex = z;
         }
     }
 
     var orientation;
-    switch (game.playerList.length)
+    switch(game.playerList.length)
     {
     case 2:
         orientation = playerIndex * Math.PI;
@@ -99,10 +99,10 @@ function Render(game, socket)
     this.synchronizeTurn = function (oldX, oldY, newX, newY, owner)
     {
         // Avoiding duplicate moves
-        if (window.name == owner) return;
+        if(window.name == owner) return;
 
         // Deselecting the previously selected cell
-        if (game.lastClicked)
+        if(game.lastClicked)
             board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
 
         // We want to override turn restrictions when the server is trying to move the units
@@ -112,7 +112,7 @@ function Render(game, socket)
         game.table[newX][newY].visual.fire('click');
         serverSays = false;
 
-        if (window.name == game.playerList[0].Name && game.playerList[0].Turn)
+        if(window.name == game.playerList[0].Name && game.playerList[0].Turn)
         {
             var newBuff = game.RandomBuff();
             socket.emit('synch_buff',
@@ -165,18 +165,18 @@ function Render(game, socket)
 
     function recolorStrokes()
     {
-        for (var i = 0; i < board.length; ++i)
+        for(var i = 0; i < board.length; ++i)
         {
-            for (var j = 0; j < board[i].length; ++j)
+            for(var j = 0; j < board[i].length; ++j)
             {
-                for (var z = 0; z < game.playerList.length; ++z)
+                for(var z = 0; z < game.playerList.length; ++z)
                 {
-                    if (board[i][j].owner == game.playerList[z].Name)
+                    if(board[i][j].owner == game.playerList[z].Name)
                     {
                         board[i][j].visual.stroke(strokeColors[game.playerList[z].Index]);
                         board[i][j].visual.strokeWidth(2);
                         board[i][j].visual.moveToTop();
-                        if (board[i][j].image) board[i][j].image.moveToTop();
+                        if(board[i][j].image) board[i][j].image.moveToTop();
                         break;
                     }
                     else
@@ -272,11 +272,11 @@ function Render(game, socket)
     function drawScoreBoard()
     {
         scoreBoard.moveToTop();
-        for (var k = 0; k < numOfPlayers; ++k)
+        for(var k = 0; k < numOfPlayers; ++k)
         {
             // update each players score
             scoreBoardScores[k].text(game.playerList[k].Score);
-            if (game.playerList[k].Turn)
+            if(game.playerList[k].Turn)
             {
                 // update the now playing section
                 scoreBoardPlaying.text(scoreBoardPlayingTxt + game.playerList[k].Name);
@@ -345,7 +345,7 @@ function Render(game, socket)
     });
 
     // go threough and add all the  other players' names and scores'
-    for (var k = 1; k < numOfPlayers; k++)
+    for(var k = 1; k < numOfPlayers; k++)
     {
         // adds the correct name in the correct spot
         scoreBoardNames[k] = new Kinetic.Text(
@@ -409,7 +409,7 @@ function Render(game, socket)
 
     scoreBoard.add(scoreBoardBack);
     scoreBoard.add(scoreBoardTitle);
-    for (var k = 0; k < numOfPlayers; k++)
+    for(var k = 0; k < numOfPlayers; k++)
     {
         scoreBoard.add(scoreBoardNames[k]);
         scoreBoard.add(scoreBoardScores[k]);
@@ -431,7 +431,7 @@ function Render(game, socket)
         var temp = board[i][j].image;
 
         // tell the game to move the units, if possible
-        if (game.Move(unitX, unitY, i, j))
+        if(game.Move(unitX, unitY, i, j))
         {
             // move the unit graphically
             board[i][j].image = board[unitX][unitY].image;
@@ -458,7 +458,7 @@ function Render(game, socket)
             board[i][j].image.cache();
             board[i][j].visual.on('click', clickOnUnit);
 
-            if (!serverSays)
+            if(!serverSays)
             {
                 socket.emit('play_a_unit',
                 {
@@ -493,13 +493,13 @@ function Render(game, socket)
         var temp = board[i][j].visual;
 
         // tell the game to attack, if possible
-        if (game.Attack(unitX, unitY, i, j))
+        if(game.Attack(unitX, unitY, i, j))
         {
             // set the last played now, might be changed if unit dies && attack is melee
             lastPlayed[0] = unitX;
             lastPlayed[1] = unitY;
             // test to see if the unit died
-            if (board[i][j].owner != defenderName)
+            if(board[i][j].owner != defenderName)
             {
                 // move the image to the graveyard
                 var holder = board[unitX][unitY].image;
@@ -519,7 +519,7 @@ function Render(game, socket)
                 board[i][j].visual.off('click');
 
                 // if the attack was a melee
-                if (!attackRanged)
+                if(!attackRanged)
                 {
                     // clear the old cell
                     board[unitX][unitY].visual.off('click');
@@ -554,7 +554,7 @@ function Render(game, socket)
                 }
             }
             // if the server didn't call this function, send to server
-            if (!serverSays)
+            if(!serverSays)
             {
                 socket.emit('play_a_unit',
                 {
@@ -579,21 +579,21 @@ function Render(game, socket)
             j = this.getAttr('myY');
 
         // Deselecting the previously selected cell
-        if (game.lastClicked)
+        if(game.lastClicked)
             board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
 
         // Highlighting the cell and adding the proper event handler to it
         board[i][j].visual.fill("#3399FF");
         board[i][j].visual.off('click');
         board[i][j].visual.on("click", clickOnHighlightedUnit);
-        if (serverSays || (
+        if(serverSays || (
             game.currentPlayer.Name == board[i][j].owner &&
             window.name == game.currentPlayer.Name && !(lastPlayed[0] == i && lastPlayed[1] == j)
         ))
         {
             //Highlighting the cells which the unit can move to and attaching proper event handlers to them
             var canMove = game.MoveRange(i, j);
-            for (var t = 0; t < canMove.length; ++t)
+            for(var t = 0; t < canMove.length; ++t)
             {
                 var x = canMove[t][0],
                     y = canMove[t][1];
@@ -611,7 +611,7 @@ function Render(game, socket)
             var attackRange = attackData[1];
 
             // Highlighting the cells the unit can attack right now
-            for (var t = 0; t < canAttack.length; ++t)
+            for(var t = 0; t < canAttack.length; ++t)
             {
                 var x = canAttack[t][0],
                     y = canAttack[t][1];
@@ -624,14 +624,14 @@ function Render(game, socket)
             }
 
             // Highlighting the cells which the unit could attack if there was an enemy inside
-            for (var t = 0; t < attackRange.length; ++t)
+            for(var t = 0; t < attackRange.length; ++t)
             {
                 var x = attackRange[t][0],
                     y = attackRange[t][1];
-                if (board[x][y].visual.fill() == '#66FF66' || board[x][y].visual.fill() == '')
+                if(board[x][y].visual.fill() == '#66FF66' || board[x][y].visual.fill() == '')
                 {
                     var r, gx, gy;
-                    if (x == 0)
+                    if(x == 0)
                     {
                         r = 1.35 * radius;
                         gx = OX + r * Math.cos(y * Math.PI / 4 + Math.PI / 8 + orientation);
@@ -681,7 +681,7 @@ function Render(game, socket)
 
         // Deselecting the green cells and reverting their event handlers
         var canMove = game.MoveRange(i, j);
-        for (var t = 0; t < canMove.length; ++t)
+        for(var t = 0; t < canMove.length; ++t)
         {
             var x = canMove[t][0],
                 y = canMove[t][1];
@@ -694,17 +694,17 @@ function Render(game, socket)
         var canAttack = attackData[0];
         var attackRange = attackData[1];
 
-        for (var t = 0; t < canAttack.length; ++t)
+        for(var t = 0; t < canAttack.length; ++t)
         {
             var x = canAttack[t][0],
                 y = canAttack[t][1];
             board[x][y].visual.fill((x + y) % 2 ? '#C4C4C4' : '#FFFFFF');
             board[x][y].visual.off('click');
-            if (board[x][y].type)
+            if(board[x][y].type)
                 board[x][y].visual.on('click', clickOnUnit);
         }
 
-        for (var t = 0; t < attackRange.length; ++t)
+        for(var t = 0; t < attackRange.length; ++t)
         {
             var x = attackRange[t][0],
                 y = attackRange[t][1];
@@ -718,7 +718,7 @@ function Render(game, socket)
 
     function calcImageData(i, j)
     {
-        if (i == 0)
+        if(i == 0)
         {
             var scale = 0.8;
             var w = radius * scale,
@@ -774,7 +774,7 @@ function Render(game, socket)
             imagesLoaded++;
 
             // The loading order of the images is not guaranteed, so we have to count the number of images loaded
-            if (imagesLoaded == totalImages)
+            if(imagesLoaded == totalImages)
             {
                 stage.add(layer);
                 stage.add(overlay);
@@ -784,7 +784,7 @@ function Render(game, socket)
         };
     }
 
-    for (i = 0; i < 8; i++)
+    for(i = 0; i < 8; i++)
     {
         board[0][i].visual = new Kinetic.Shape(
         {
@@ -797,9 +797,9 @@ function Render(game, socket)
         });
     }
 
-    for (i = 1; i < 8; i++)
+    for(i = 1; i < 8; i++)
     {
-        for (j = 0; j < 24; j++)
+        for(j = 0; j < 24; j++)
         {
             board[i][j].visual = new Kinetic.Shape(
             {
@@ -810,7 +810,7 @@ function Render(game, socket)
                 myX: i,
                 myY: j,
             });
-            if (board[i][j].type != undefined)
+            if(board[i][j].type != undefined)
             {
                 totalImages++;
                 fillImage(i, j, images[board[i][j].type]);
@@ -818,13 +818,13 @@ function Render(game, socket)
         }
     }
 
-    for (i = 0; i < 8; i++)
+    for(i = 0; i < 8; i++)
     {
         layer.add(board[0][i].visual);
     }
-    for (i = 1; i < 8; i++)
+    for(i = 1; i < 8; i++)
     {
-        for (j = 0; j < 24; j++)
+        for(j = 0; j < 24; j++)
         {
             layer.add(board[i][j].visual);
         }
