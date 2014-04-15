@@ -129,7 +129,7 @@ io.sockets.on(
                     // Host declares number of players in game
                     if(numOfPlayers == 0)
                     {
-                        hostPlayerSize = message.num_players;
+                        hostPlayerSize = message.numPlayers;
                         hostMaxScore = message.maxScore;
                     }
 

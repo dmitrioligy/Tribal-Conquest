@@ -15,7 +15,7 @@ function Game()
 
     // Methods
     // Initialize(players)
-    // InitializeUnits(row_start, player_start, player)
+    // InitializeUnits(rowStart, playerStart, player)
     // AddPoint(name)
     // TestPrint()    
     // NextTurn() 
@@ -72,11 +72,11 @@ function Game()
 
         // Define who begins first when game begins
         this.playerList[0].turn = true;
-        this.playerList.Playing = 0;
+        this.playerList.playing = 0;
         this.currentPlayer = this.playerList[0];
 
         var p1Start, p2Start, p3Start, p4Start;
-        var Row_Start = 5;
+        var rowStart = 5;
         // Based on numbers of players create units
         switch(players.length)
         {
@@ -102,53 +102,53 @@ function Game()
         }
 
         // Initialize Units based on Start locations found in switch
-        this.InitializeUnits(Row_Start, p1Start, this.playerList[0]);
-        this.InitializeUnits(Row_Start, p2Start, this.playerList[1]);
+        this.InitializeUnits(rowStart, p1Start, this.playerList[0]);
+        this.InitializeUnits(rowStart, p2Start, this.playerList[1]);
         if(players.length > 2)
         {
-            this.InitializeUnits(Row_Start, p3Start, this.playerList[2]);
+            this.InitializeUnits(rowStart, p3Start, this.playerList[2]);
         }
         if(players.length > 3)
         {
-            this.InitializeUnits(Row_Start, p4Start, this.playerList[3]);
+            this.InitializeUnits(rowStart, p4Start, this.playerList[3]);
         }
     };
 
     // Function to initialize units based on number of players
-    this.InitializeUnits = function (row_start, player_start, player)
+    this.InitializeUnits = function (rowStart, playerStart, player)
     {
-        var player_name = player.Name;
+        var playerName = player.Name;
         // Column 1 (CCW)
-        this.table[row_start][player_start] = new Unit("Scout", player_name);
-        this.table[row_start + 1][player_start] = new Unit("Peasant", player_name);
-        this.table[row_start + 2][player_start] = new Unit("Peasant", player_name);
+        this.table[rowStart][playerStart] = new Unit("Scout", playerName);
+        this.table[rowStart + 1][playerStart] = new Unit("Peasant", playerName);
+        this.table[rowStart + 2][playerStart] = new Unit("Peasant", playerName);
 
         // Column 2
-        this.table[row_start][player_start - 1] = new Unit("Peasant", player_name);
-        this.table[row_start + 1][player_start - 1] = new Unit("Ranger", player_name);
-        this.table[row_start + 2][player_start - 1] = new Unit("Ranger", player_name);
+        this.table[rowStart][playerStart - 1] = new Unit("Peasant", playerName);
+        this.table[rowStart + 1][playerStart - 1] = new Unit("Ranger", playerName);
+        this.table[rowStart + 2][playerStart - 1] = new Unit("Ranger", playerName);
 
         // Column 3
         // if table wraps around
         if(player.index == 3)
         {
-            player_start = 25;
+            playerStart = 25;
         }
-        this.table[row_start][player_start - 2] = new Unit("Peasant", player_name);
-        this.table[row_start + 1][player_start - 2] = new Unit("Ranger", player_name);
-        this.table[row_start + 2][player_start - 2] = new Unit("King", player_name);
+        this.table[rowStart][playerStart - 2] = new Unit("Peasant", playerName);
+        this.table[rowStart + 1][playerStart - 2] = new Unit("Ranger", playerName);
+        this.table[rowStart + 2][playerStart - 2] = new Unit("King", playerName);
 
         // Column 4
-        this.table[row_start][player_start - 3] = new Unit("Scout", player_name);
-        this.table[row_start + 1][player_start - 3] = new Unit("Peasant", player_name);
-        this.table[row_start + 2][player_start - 3] = new Unit("Peasant", player_name);
+        this.table[rowStart][playerStart - 3] = new Unit("Scout", playerName);
+        this.table[rowStart + 1][playerStart - 3] = new Unit("Peasant", playerName);
+        this.table[rowStart + 2][playerStart - 3] = new Unit("Peasant", playerName);
     };
 
     // Score one point to a player
-    this.AddPoint = function (player_name)
+    this.AddPoint = function (playerName)
     {
         // Find which player scored a point
-        switch(player_name)
+        switch(playerName)
         {
         case this.playerList[0].name:
 
@@ -205,20 +205,20 @@ function Game()
     // Currently player which can make moves/attacks
     this.NextTurn = function ()
     {
-        ++this.playerList[this.playerList.Playing].Played;
-        if(this.playerList[this.playerList.Playing].Played >= 2)
+        ++this.playerList[this.playerList.playing].played;
+        if(this.playerList[this.playerList.playing].played >= 2)
         {
-            this.playerList[this.playerList.Playing].Played = 0;
-            this.playerList[this.playerList.Playing].turn = false;
-            ++this.playerList.Playing;
-            if(this.playerList.Playing >= this.playerList.length)
+            this.playerList[this.playerList.playing].played = 0;
+            this.playerList[this.playerList.playing].turn = false;
+            ++this.playerList.playing;
+            if(this.playerList.playing >= this.playerList.length)
             {
-                this.playerList.Playing = 0;
+                this.playerList.playing = 0;
                 this.MiddleCheck();
-                this.Test_Win();
+                this.TestWin();
             }
-            this.playerList[this.playerList.Playing].turn = true;
-            this.currentPlayer = this.playerList[this.playerList.Playing];
+            this.playerList[this.playerList.playing].turn = true;
+            this.currentPlayer = this.playerList[this.playerList.playing];
         }
     };
 
@@ -251,7 +251,7 @@ function Game()
     {
         // Randomize buff to be generated
         var buffs = ["Damage", "Health", "Speed"]; //need to add rez
-        var buff_indx = Math.floor(Math.random() * buffs.length);
+        var buffIndex = Math.floor(Math.random() * buffs.length);
 
         // Buff will spawn randomly within range of row 1-4
         while(true)
@@ -263,9 +263,9 @@ function Game()
             // if location is empty place buff
             if(this.table[x][y].type == null || this.table[x][y] == undefined)
             {
-                //this.Add_Buff( buffs[buff_indx], x, y );
+                //this.AddBuff( buffs[buffIndex], x, y );
                 var end = new Array(0);
-                end[0] = buffs[buff_indx];
+                end[0] = buffs[buffIndex];
                 end[1] = x;
                 end[2] = y;
                 return end;

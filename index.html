@@ -266,20 +266,20 @@
                         $('#container').css('display', 'none');
 
                         // Is current client in winniers list?
-                        var has_won;
+                        var hasWon;
                         for(var i = 0; i < game.winners.length; i++)
                         {
                             // Display win screen for client
                             if(game.winners[i] == window.name)
                             {
                                 $('#win').css('display', 'block');
-                                has_won = true;
+                                hasWon = true;
                                 break;
                             }
                         }
 
                         // If not in winning list, display lose screen
-                        if(has_won == false)
+                        if(hasWon == false)
                         {
                             $('#lost').css('display', 'block');
                         }
