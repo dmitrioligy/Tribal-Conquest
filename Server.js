@@ -55,7 +55,8 @@ function handler(request, response)
     }).resume();
 }
 
-io.sockets.on(
+io.sockets.on
+(
     'connection',
     function (client)
     {
@@ -139,6 +140,10 @@ io.sockets.on(
                     client.set('player_number', numOfPlayers);
                     client.set('turn_number', 0);
                     client.emit('searching', 'Searching for game...');
+                    console.log("NUM OF PLAYERS: " + numOfPlayers);
+                    console.log("PLAYERS: " + players);
+                    console.log("HOST OPTIONS: " + hostOptions);
+                    console.log("HostPlayerSize: " + hostPlayerSize);
 
                     // if Number of players matches host's game size => start game
                     if((numOfPlayers == hostPlayerSize) && (hostOptions == true))

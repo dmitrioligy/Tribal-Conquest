@@ -10,6 +10,7 @@ function Game()
     // this.deadContainer
     // this.table[x][y] is a array of array of Units - refer to Unit class
     // this.playerList - array of players
+        // name, index, score, played
     // this.maxScore
     // this.currentPlayer
 
