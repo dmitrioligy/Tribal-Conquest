@@ -1,4 +1,3 @@
-
 // Allows access to local file system.
 var fs = require('fs')
 
@@ -157,17 +156,20 @@ io.sockets.on(
       }
     );
 
-    // Listen for end of turn
+    // Listen for "synch_buff", which the host should emit to tell all other clients
+    // to add the buf (buffName) to the location (buffX, buffY)
     client.on
     (
-    	'next_turn',
-    	function()
-    	{	
-    		// broadcast to others end of turn
-    		io.sockets.emit('next_turn');
-    	}
+      'synch_buff',
+      function(message)
+      { 
+        if( message )
+        {
+          // send the new buff to everyone
+          io.sockets.emit('synch_buff', {buffName: message.buffName,
+                        buffX: message.buffX, buffY: message.buffY});
+        }
+      }
     );
-	
-
 
   });
