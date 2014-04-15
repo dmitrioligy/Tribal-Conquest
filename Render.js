@@ -66,7 +66,7 @@ function Render(game, socket)
     var overlay = new Kinetic.Layer();
 
     // Creates the graphical part of cell i in the pizza
-    function makePizza(i)
+    function MakePizza(i)
     {
         return function (context)
         {
@@ -82,7 +82,7 @@ function Render(game, socket)
     }
 
     // Creates the graphical component of cell (i, j)
-    function makeCell(i, j)
+    function MakeCell(i, j)
     {
         return function (context)
         {
@@ -103,7 +103,7 @@ function Render(game, socket)
 
     // Simulating the client's clicking on a unit and either attacking or moving it
     var serverSays = false;
-    this.synchronizeTurn = function (oldX, oldY, newX, newY, owner)
+    this.SynchronizeTurn = function (oldX, oldY, newX, newY, owner)
     {
         // Avoiding duplicate moves
         if(window.name == owner) return;
@@ -131,10 +131,10 @@ function Render(game, socket)
             });
         }
 
-        recolorStrokes();
+        RecolorStrokes();
     }
 
-    this.synchronizeBuff = function (buffname, buffX, buffY)
+    this.SynchronizeBuff = function (buffname, buffX, buffY)
     {
         // Save graphical info before board is changed
         var temp = board[buffX][buffY].visual;
@@ -145,7 +145,7 @@ function Render(game, socket)
         // Will change this (below) to a function &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         var imageObj = new Image();
         imageObj.src = images[buffname];
-        var data = calcImageData(buffX, buffY);
+        var data = CalculateImageData(buffX, buffY);
         imageObj.onload = function ()
         {
             var unit = new Kinetic.Image(
@@ -161,7 +161,7 @@ function Render(game, socket)
                 width: data.w,
                 height: data.h,
             });
-            board[buffX][buffY].visual.on("click", clickOnUnit);
+            board[buffX][buffY].visual.on("click", ClickOnUnit);
             board[buffX][buffY].image = unit;
             unit.setListening(false);
             layer.add(unit);
@@ -172,7 +172,7 @@ function Render(game, socket)
     }
 
     // Goes over each cell and colors its border according to player index
-    function recolorStrokes()
+    function RecolorStrokes()
     {
         for(var i = 0; i < board.length; ++i)
         {
@@ -196,11 +196,11 @@ function Render(game, socket)
                 }
             }
         }
-        drawScoreBoard();
+        DrawScoreBoard();
         stage.draw();
     }
 
-    function resizeThings()
+    function ResizeThings()
     {
         var width2 = window.innerWidth || document.body.clientWidth;
         var height2 = window.innerHeight || document.body.clientHeight;
@@ -217,7 +217,7 @@ function Render(game, socket)
         });
         stage.draw();
     }
-    window.onresize = resizeThings;
+    window.onresize = ResizeThings;
 
     // Setting up the tooltip
     var ttwidth = 250;
@@ -259,7 +259,7 @@ function Render(game, socket)
     tooltip.hide();
     overlay.add(tooltip);
 
-    function drawTooltip(i, j)
+    function DrawTooltip(i, j)
     {
         tooltip.moveToTop();
         if(board[i][j].buff)
@@ -283,7 +283,7 @@ function Render(game, socket)
     // setting up the scoreBoard
     var numOfPlayers = game.playerList.length;
 
-    function drawScoreBoard()
+    function DrawScoreBoard()
     {
         scoreBoard.moveToTop();
         for(var k = 0; k < numOfPlayers; ++k)
@@ -434,7 +434,7 @@ function Render(game, socket)
     //end   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
     // Takes the place that was clicked on (object), and the unit that is selected (unitX, unitY)
-    moveUnit = function (object, unitX, unitY)
+    MoveUnit = function (object, unitX, unitY)
     {
         var i = object.getAttr('myX'),
             j = object.getAttr('myY');
@@ -454,7 +454,7 @@ function Render(game, socket)
             board[unitX][unitY].visual.off('click');
 
             // resize the image to fit the new cell
-            var data = calcImageData(i, j);
+            var data = CalculateImageData(i, j);
             board[i][j].image.setPosition(
             {
                 x: data.x,
@@ -471,7 +471,7 @@ function Render(game, socket)
                 y: data.h / 2
             });
             board[i][j].image.cache();
-            board[i][j].visual.on('click', clickOnUnit);
+            board[i][j].visual.on('click', ClickOnUnit);
 
             if(!serverSays)
             {
@@ -485,7 +485,7 @@ function Render(game, socket)
             }
 
             // update the board
-            recolorStrokes();
+            RecolorStrokes();
             stage.draw();
             // save the last played
             lastPlayed[0] = i;
@@ -494,7 +494,7 @@ function Render(game, socket)
     }
 
     // Takes the place that was clicked on (object), and the unit that is selected (unitX, unitY)
-    attackUnit = function (object, unitX, unitY)
+    AttackUnit = function (object, unitX, unitY)
     {
         var i = object.getAttr('myX'),
             j = object.getAttr('myY');
@@ -520,7 +520,7 @@ function Render(game, socket)
                 // move the image to the graveyard
                 var holder = board[unitX][unitY].image;
                 var graveIndex = game.deadContainer.length - 1;
-                var graveScale = calcImageData(7, 0);
+                var graveScale = CalculateImageData(7, 0);
                 board[i][j].image.setSize(
                 {
                     width: graveScale.w,
@@ -543,7 +543,7 @@ function Render(game, socket)
 
                     // move the attacker's image to the defenders cell
                     board[i][j].image = holder;
-                    var data = calcImageData(i, j);
+                    var data = CalculateImageData(i, j);
                     board[i][j].image.setPosition(
                     {
                         x: data.x,
@@ -562,7 +562,7 @@ function Render(game, socket)
                     board[i][j].image.cache();
                     board[i][j].visual = temp;
                     board[i][j].visual.off('click');
-                    board[i][j].visual.on('click', clickOnUnit);
+                    board[i][j].visual.on('click', ClickOnUnit);
 
                     // changed the lastPlayed to the new location
                     lastPlayed[0] = i;
@@ -580,7 +580,7 @@ function Render(game, socket)
                     newY: j
                 });
             }
-            recolorStrokes();
+            RecolorStrokes();
             stage.draw();
         }
     }
@@ -589,7 +589,7 @@ function Render(game, socket)
     lastPlayed[0] = 0;
     lastPlayed[1] = 0;
 
-    clickOnUnit = function ()
+    ClickOnUnit = function ()
     {
         var i = this.getAttr('myX'),
             j = this.getAttr('myY');
@@ -601,7 +601,7 @@ function Render(game, socket)
         // Highlighting the cell and adding the proper event handler to it
         board[i][j].visual.fill("#3399FF");
         board[i][j].visual.off('click');
-        board[i][j].visual.on("click", clickOnHighlightedUnit);
+        board[i][j].visual.on("click", ClickOnHighlightedUnit);
         if(serverSays || 
             (
                 game.currentPlayer.name == board[i][j].owner &&
@@ -620,7 +620,7 @@ function Render(game, socket)
                 board[x][y].visual.off('click');
                 board[x][y].visual.on("click", function ()
                 {
-                    moveUnit(this, i, j);
+                    MoveUnit(this, i, j);
                 });
             }
 
@@ -638,7 +638,7 @@ function Render(game, socket)
                 board[x][y].visual.off('click');
                 board[x][y].visual.on('click', function ()
                 {
-                    attackUnit(this, i, j);
+                    AttackUnit(this, i, j);
                 });
             }
 
@@ -683,12 +683,12 @@ function Render(game, socket)
                 else board[x][y].visual.fill("#F0CCCC");
             }
         }
-        drawTooltip(i, j);
+        DrawTooltip(i, j);
         game.lastPlayed = [i, j];
         stage.draw();
     }
 
-    clickOnHighlightedUnit = function ()
+    ClickOnHighlightedUnit = function ()
     {
         var i = this.getAttr('myX'),
             j = this.getAttr('myY');
@@ -696,7 +696,7 @@ function Render(game, socket)
         // Deselecting the unit and reverting its event handler
         board[i][j].visual.fill((i + j) % 2 ? '#C4C4C4' : '#FFFFFF');
         board[i][j].visual.off('click');
-        board[i][j].visual.on("click", clickOnUnit);
+        board[i][j].visual.on("click", ClickOnUnit);
 
         // Deselecting the green cells and reverting their event handlers
         var canMove = game.MoveRange(i, j);
@@ -720,7 +720,7 @@ function Render(game, socket)
             board[x][y].visual.fill((x + y) % 2 ? '#C4C4C4' : '#FFFFFF');
             board[x][y].visual.off('click');
             if(board[x][y].type)
-                board[x][y].visual.on('click', clickOnUnit);
+                board[x][y].visual.on('click', ClickOnUnit);
         }
 
         for(var t = 0; t < attackRange.length; ++t)
@@ -735,7 +735,7 @@ function Render(game, socket)
         stage.draw();
     }
 
-    function calcImageData(i, j)
+    function CalculateImageData(i, j)
     {
         if(i == 0)
         {
@@ -764,11 +764,11 @@ function Render(game, socket)
         }
     }
 
-    function fillImage(i, j, src)
+    function FitImage(i, j, src)
     {
         var imageObj = new Image();
         imageObj.src = src;
-        var data = calcImageData(i, j);
+        var data = CalculateImageData(i, j);
         imageObj.onload = function ()
         {
             var unit = new Kinetic.Image(
@@ -786,7 +786,7 @@ function Render(game, socket)
             });
             unit.cache(); // Images have to be cached if we are to put filters on them
             // unit.filters([Kinetic.Filters.RGB]);
-            board[i][j].visual.on("click", clickOnUnit);
+            board[i][j].visual.on("click", ClickOnUnit);
             board[i][j].image = unit;
             unit.setListening(false); // Click through
             layer.add(unit);
@@ -797,7 +797,7 @@ function Render(game, socket)
             {
                 stage.add(layer);
                 stage.add(overlay);
-                recolorStrokes();
+                RecolorStrokes();
                 stage.draw();
             }
         };
@@ -808,7 +808,7 @@ function Render(game, socket)
     {
         board[0][i].visual = new Kinetic.Shape(
         {
-            sceneFunc: makePizza(i),
+            sceneFunc: MakePizza(i),
             fill: i % 2 ? '#C4C4C4' : '#FFFFFF',
             stroke: 'black',
             strokeWidth: 1,
@@ -824,7 +824,7 @@ function Render(game, socket)
         {
             board[i][j].visual = new Kinetic.Shape(
             {
-                sceneFunc: makeCell(i, j),
+                sceneFunc: MakeCell(i, j),
                 fill: (i + j) % 2 ? '#C4C4C4' : '#FFFFFF',
                 stroke: 'black',
                 strokeWidth: 1,
@@ -834,7 +834,7 @@ function Render(game, socket)
             if(board[i][j].type != undefined) // Meaning it's an image
             {
                 totalImages++;
-                fillImage(i, j, images[board[i][j].type]);
+                FitImage(i, j, images[board[i][j].type]);
             }
         }
     }
