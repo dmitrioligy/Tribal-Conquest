@@ -143,7 +143,6 @@ io.sockets.on(
                     // if Number of players matches host's game size => start game
                     if((numOfPlayers == hostPlayerSize) && (hostOptions == true))
                     {
-
                         // Start the game
                         gameActive = true;
                         io.sockets.emit('start_game',
