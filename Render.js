@@ -131,7 +131,7 @@ function Render(game, socket)
         // save graphical info before board is changed
         var temp = board[buffX][buffY].visual;
         // add the buff to the game
-        game.Add_Buff(buffName, buffX, buffY);
+        game.AddBuff(buffName, buffX, buffY);
 
         // put the buff on the screen
         // will change this (below) to a function &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
