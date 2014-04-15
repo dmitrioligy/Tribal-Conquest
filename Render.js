@@ -1,9 +1,6 @@
 function Render(game, socket)
 {
-
-    // Moving parts of drawBoard (that don't have to be executed everytime) outside
     var board = game.table;
-    var width, height, radius, OX, OY;
 
     var images = {};
     images["King"]    = 'king.png';
