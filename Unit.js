@@ -46,7 +46,7 @@ function Unit(newType, newOwner)
     	this.dead = false;
     	this.used = false;
     }
-
+    // set up the unit based on the type
    	switch(newType)
    	{
 	   	case "Peasant":
@@ -104,7 +104,7 @@ function Unit(newType, newOwner)
 	   	default:
 	 	  	break;
     }
-
+    // function used to copy a unit, used for moving
 	this.CopyStats = function(newUnit)
 	{
 		this.dmg = newUnit.dmg;
@@ -136,7 +136,7 @@ function Unit(newType, newOwner)
 		delete this.image.used;
 		delete this.isRanged;
 	}
-
+	// function for being attacked
 	this.TakeDamage = function(damage)
 	{
 		this.hp = this.hp - damage;
@@ -147,12 +147,12 @@ function Unit(newType, newOwner)
 			this.dead = true;
 		}
 	};
-
-
+	// function for appling a buff to a unit
 	this.ApplyBuff = function(buff)
 	{
 		switch(buff.type)
 		{
+			// rez is not implimented yet
 			//case "Rez":
 			//	// Click Event on Graveyard
 			//	// place unit on row 7 , checking columns 5,4,6,3,7,2,8
