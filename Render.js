@@ -3,6 +3,7 @@ function Render(game, socket)
     // Moving parts of drawBoard (that don't have to be executed everytime) outside
     var board = game.table;
     var width, height, radius, OX, OY;
+    var stage;
 
     var images = {};
     images["King"]    = 'king.png';
@@ -15,32 +16,6 @@ function Render(game, socket)
     strokeColors[1] = 'blue';
     strokeColors[2] = 'yellow';
     strokeColors[3] = 'green';
-
-    function recolorStrokes()
-    {
-        for(var i = 0; i < board.length; ++i)
-        {
-            for(var j = 0; j < board[i].length; ++j)
-            {
-                for(var z = 0; z < game.Player_List.length; ++z)
-                {
-                    if(board[i][j].owner == game.Player_List[z].Name)
-                    {
-                        board[i][j].visual.stroke(strokeColors[game.Player_List[z].Index]);
-                        board[i][j].visual.strokeWidth(2);
-                        board[i][j].visual.moveToTop();
-                        if(board[i][j].image) board[i][j].image.moveToTop();
-                        break;
-                    }
-                    else
-                    {
-                        board[i][j].visual.stroke('black');
-                        board[i][j].visual.strokeWidth(1);
-                    }
-                }
-            }
-        }
-    }
 
     function makePizza(i) 
     {
@@ -69,28 +44,6 @@ function Render(game, socket)
         };
     }
 
-    // Simulating the client's clicking on a unit and either attacking or moving it
-    var serverSays = false;
-    this.synchronizeTurn = function(oldX, oldY, newX, newY, owner)
-    {
-        // Avoiding duplicate moves
-        if(window.name == owner)
-            return;
-
-        // Deselecting the previously selected cell
-        if(game.lastClicked)
-            board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
-
-        // We want to override turn restrictions when the server is trying to move the units
-        // for every single player
-        serverSays = true;
-        game.table[oldX][oldY].visual.fire('click');
-        game.table[newX][newY].visual.fire('click');
-        serverSays = false;
-
-        recolorStrokes();
-    }
-
     function drawBoard() 
     {
         width = window.innerWidth || document.body.clientWidth;
@@ -101,14 +54,61 @@ function Render(game, socket)
         var imagesLoaded = 0,
             totalImages  = 0;
 
-        var stage = new Kinetic.Stage({
+        stage = new Kinetic.Stage({
             container: 'container',
             width: width,
             height: height
         });
 
-        game.unitsPlayed = 0;
-        game.overrideTurns = false;
+        // Simulating the client's clicking on a unit and either attacking or moving it
+        var serverSays = false;
+        this.synchronizeTurn = function(oldX, oldY, newX, newY, owner)
+        {
+            // Avoiding duplicate moves
+            if(window.name == owner)
+                return;
+
+            // Deselecting the previously selected cell
+            if(game.lastClicked)
+                board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
+
+            // We want to override turn restrictions when the server is trying to move the units
+            // for every single player
+            serverSays = true;
+            game.table[oldX][oldY].visual.fire('click');
+            game.table[newX][newY].visual.fire('click');
+            serverSays = false;
+
+            recolorStrokes();
+        }
+        
+        function recolorStrokes()
+        {
+            for(var i = 0; i < board.length; ++i)
+            {
+                for(var j = 0; j < board[i].length; ++j)
+                {
+                    for(var z = 0; z < game.Player_List.length; ++z)
+                    {
+                        if(board[i][j].owner == game.Player_List[z].Name)
+                        {
+                            board[i][j].visual.stroke(strokeColors[game.Player_List[z].Index]);
+                            board[i][j].visual.strokeWidth(2);
+                            board[i][j].visual.moveToTop();
+                            if(board[i][j].image) board[i][j].image.moveToTop();
+                            break;
+                        }
+                        else
+                        {
+                            board[i][j].visual.stroke('black');
+                            board[i][j].visual.strokeWidth(1);
+                        }
+                    }
+                }
+            }
+            drawScoreBoard();
+            stage.draw();
+        }
 
         function resizeThings() 
         {
@@ -117,6 +117,7 @@ function Render(game, socket)
             var widthScale = width2 / width;
             var heightScale = height2 / height;
             var scale = Math.min(widthScale, heightScale);
+
             stage.setWidth(width2);
             stage.setHeight(height2);
             stage.setScale({
@@ -128,6 +129,7 @@ function Render(game, socket)
         window.onresize = resizeThings;
 
         var layer = new Kinetic.Layer();
+        var overlay = new Kinetic.Layer();
 
         // Setting up the tooltip
         var ttwidth = 250;
@@ -164,7 +166,7 @@ function Render(game, socket)
           tooltip.add(tooltipBack);
           tooltip.add(tooltipText);
           tooltip.hide();
-          layer.add(tooltip);
+          overlay.add(tooltip);
 
         function drawTooltip(i, j)
         {
@@ -177,7 +179,7 @@ function Render(game, socket)
             );
             tooltipBack.height(tooltipText.height());
             tooltip.show();
-            stage.draw();
+            overlay.draw();
         }
 
         // ------------lincolns code **************************************************************************
@@ -198,7 +200,7 @@ function Render(game, socket)
                     scoreBoardPlaying.fill(strokeColors[k]);
                 }
             }
-            stage.draw();
+            overlay.draw();
         }
         // create the score board object
         var scoreBoardWidth = 250;
@@ -321,8 +323,7 @@ function Render(game, socket)
             scoreBoard.add(scoreBoardScores[k]);
         }
         scoreBoard.add(scoreBoardPlaying);
-        layer.add(scoreBoard);
-        drawScoreBoard();
+        overlay.add(scoreBoard);
         // ------------lincolns code **************************************************************************
         //end   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         
@@ -359,7 +360,6 @@ function Render(game, socket)
 
                 // update the board
                 recolorStrokes();
-                drawScoreBoard();
                 stage.draw();
                 // save the last played
                 lastPlayed[0] = i;
@@ -426,7 +426,6 @@ function Render(game, socket)
                     socket.emit('play_a_unit', {oldX: unitX, oldY: unitY, newX: i, newY: j});
                 }
                 recolorStrokes();
-                drawScoreBoard();
                 stage.draw();
             }
         }
@@ -616,6 +615,7 @@ function Render(game, socket)
                 if(imagesLoaded == totalImages)
                 {
                     stage.add(layer);
+                    stage.add(overlay);
                     recolorStrokes();
                     stage.draw();
                 }
