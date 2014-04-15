@@ -337,8 +337,6 @@ function Game()
         var maxUnits = 0;
         for(var i = 0; i < players.length; i++)
         {
-            // ***************** FIX ***********************
-            // Needs to allow for score to be added if players tie in # of units
             if(maxUnits < players[i].length)
             {
                 maxPlayerNames = new Array(1);
@@ -367,5 +365,4 @@ function Game()
             }
         }
     };
-
 }
