@@ -39,6 +39,32 @@
     #disconnect
     {
         color: white;
+        display: none;
+    }
+
+    #win
+    {
+        position:absolute;
+        width:300px;
+        height:200px;
+        z-index:15;
+        top:50%;
+        left:50%;
+        margin:-100px 0 0 -150px;
+        color: white;
+        display:none;
+    }
+
+    #lost
+    {
+        position:absolute;
+        width:300px;
+        height:200px;
+        z-index:15;
+        top:50%;
+        left:50%;
+        margin:-100px 0 0 -150px;
+        color: white;
         display:none;
     }
 
@@ -54,24 +80,27 @@
         background-color: black;
     }
 
-  #container {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    background: rgba(51,51,51,0.4);
-    display: none;
-  }
+    #container 
+    {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background: rgba(51,51,51,0.4);
+        display: none;  
+    }
 
 </style>
 </head>
 
+<!-- Warning Section -->
 <div id="warning">
 	JavaScript is required to run this app.
 </div>
 
 
+<!-- Searching Section -->
 <div id="searching_section">
     <body id="background" background="background.jpg"/>
 
@@ -97,6 +126,8 @@
     <input id="find" type="button" value="Find Game" disabled="true"/>
 </div>
 
+
+<!-- Disconect section -->
 <div id="disconnect"> 
     Someone disconnected - Game Over
     <br>
@@ -105,14 +136,32 @@
     </from>
 </div>
 
+
+<!-- Win and Lost Section -->
+<div id="win">
+    -= YOU HAVE WON! =-     d-(^_^)-b   
+    <br><br>
+    <input TYPE="button" onClick="history.go(0)" VALUE="Refresh">
+</div>
+<div id="lost">
+    -= you have lost... =-  q-(-_-)-p 
+    <br><br>
+    <input TYPE="button" onClick="history.go(0)" VALUE="Refresh">
+</div>
+
+
+<!-- Container - Board Game -->
 <div id="container"></div>
+
+
+<!-- Socket.io Connecting section -->
 <script>
   // $(document) returns a jQuery object representing the whole document (page).
   // $(document).ready(fn) tells jQuery to call function 'fn' after the whole
   // document is loaded.
   var name = "";
-  var num_players = 0;
-  var max_score = 0;
+  var num_players = "";
+  var max_score = "";
   $(document).ready(function() {
     // Hide the warning section and show the login section.
     $('#warning').css('display', 'none');
@@ -146,11 +195,7 @@
                 $('#host').css('display', 'block');
 
                 // if host options are not set, do not say host found
-                if( ($('#max_score').attr('value') != 0) &&
-                    ($('#num_players').attr('value') != 0) )
-                {
-                    socket.emit('host_found');
-                }
+                socket.emit('host_found');
             }
         }
     );
@@ -222,13 +267,40 @@
     	}
     );
 
-
+    // Perform next turn for client
     socket.on
     (
     	'next_turn',
     	function()
     	{
+            // Increment Game Turn
     		game.Next_Turn();
+
+            // Is there a someone in the winning container?
+            if (game.Winners.length > 0)
+            {
+                // Hide board
+                $('#container').css('display', 'none');
+
+                // Is current client in winniers list?
+                var has_won;
+                for(var i = 0; i < game.Winners.length; i++)
+                {
+                    // Display win screen for client
+                    if (game.Winners[i] == window.name)
+                    {
+                        $('#win').css('display', 'block');
+                        has_won = true;
+                        break;
+                    }
+                }
+
+                // If not in winning list, display lose screen
+                if (has_won == false)
+                {
+                    $('#lost').css('display', 'block');   
+                }
+            }
     	}
     );
 

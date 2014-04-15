@@ -31,6 +31,7 @@ function Game()
     this.Max_Score = 0;
     Array.prototype.Turn = null;
     this.dead_container = [];
+    this.Winners = new Array(0);
     
     // Constructor to create Array of Array's of Units
     // All units are set to null
@@ -122,16 +123,7 @@ function Game()
 				// If reached max points, game over
 				if (this.Player_List[0].Score == this.Max_Score)
 				{
-					// if my name == winner, display win screen
-					if (window.name == this.Player_List[0].Name)
-					{
-						Render.Win(window.name);
-					}
-					// if my name != winner, display lose screen
-					else
-					{
-						Render.Lose(window.name);
-					}
+					this.Winners.push(this.Player_List[0].Name);
 				}
 				break;
 
@@ -143,16 +135,7 @@ function Game()
 				// If reached max points, game over
 				if (this.Player_List[1].Score == this.Max_Score)
 				{
-					// if my name == winner, display win screen
-					if (window.name == this.Player_List[1].Name)
-					{
-						Render.Win(window.name);
-					}
-					// if my name != winner, display lose screen
-					else
-					{
-						Render.Lose(window.name);
-					}
+					this.Winners.push(this.Player_List[1].Name);
 				}
 				break;
 			case this.Player_List[2].Name:
@@ -163,16 +146,7 @@ function Game()
 				// If reached max points, game over
 				if (this.Player_List[2].Score == this.Max_Score)
 				{
-					// if my name == winner, display win screen
-					if (window.name == this.Player_List[2].Name)
-					{
-						Render.Win(window.name);
-					}
-					// if my name != winner, display lose screen
-					else
-					{
-						Render.Lose(window.name);
-					}
+					this.Winners.push(this.Player_List[2].Name);
 				}
 				break;
 
@@ -184,16 +158,7 @@ function Game()
 				// If reached max points, game over
 				if (this.Player_List[3].Score == this.Max_Score)
 				{
-					// if my name == winner, display win screen
-					if (window.name == this.Player_List[3].Name)
-					{
-						Render.Win(window.name);
-					}
-					// if my name != winner, display lose screen
-					else
-					{
-						Render.Lose(window.name);
-					}
+					this.Winners.push(this.Player_List[3].Name);
 				}
 				break;
 

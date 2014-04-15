@@ -5,12 +5,15 @@ var fs = require('fs')
 // Number of players
 var numOfPlayers = 0;
 
-// number of connected people
+// number of people connected
 var connected = 0;
 
 // Hosts choice of total # of players in game
 var host_players_size = 0;
 var host_max_score = 0;
+
+// Game in session
+var game_active = false;
 
 // First player to join
 var host_options = false;
@@ -52,7 +55,9 @@ function handler (request, response) {
 io.sockets.on(
   'connection',
   function(client) {
-    connected++; 
+
+    connected++;
+    console.log("Connected: " + connected);
 
     // if a disconnect occurs
     client.on
@@ -60,34 +65,43 @@ io.sockets.on(
         'disconnect',
         function()
         {
-          console.log("Disconnect");
           connected--;
+          console.log("GAME ACTIVE: " + game_active);
+          console.log("Connected: " + connected);
 
-          if ( (numOfPlayers > connected) || (connected < 1) )
+          // Game active and someone left, restart everyones game
+          if (game_active == true)
           {
             // Restart Server Information
             numOfPlayers = 0;
             players.length = 0;
-            connected = 0;
             host_options = false;
+            game_active = false;
 
             // Make players restart their page
             io.sockets.emit
             (
               'someone_disconnected'
             );
-
+          }
+          
+          if (connected < 1)
+          {
+            host_options = false;
           }
         }
     )
 
 
     // Welcome Message, host options to 1st person to connect
-    client.emit
-    (
-      'welcome', {welcome: 'Welcome to Tribal Conquest',
-                   host_options: host_options}
-    );
+    if (game_active == false)
+    {
+      client.emit
+      (
+        'welcome', {welcome: 'Welcome to Tribal Conquest',
+                     host_options: host_options}
+      );
+    }
 
     // 1st player responds with host_found to disable host options to other players
     client.on
@@ -126,8 +140,11 @@ io.sockets.on(
           client.emit('searching','Searching for game...');
 
           // if Number of players matches host's game size => start game
-          if( numOfPlayers == host_players_size )
+          if( (numOfPlayers == host_players_size) && (host_options == true) )
           {
+
+            // Start the game
+            game_active = true;
       		  io.sockets.emit('start_game', {allPlayers : players, 
                                             max_score: host_max_score});
           }
