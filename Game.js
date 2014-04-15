@@ -230,7 +230,6 @@ function Game()
         {
             if(this.playerList[i].score >= this.maxScore)
             {
-                console.log(this.maxScore);
                 this.winners[this.winners.length] = this.playerList[i].name;
             }
         }
