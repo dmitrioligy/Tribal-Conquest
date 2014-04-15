@@ -105,7 +105,7 @@ function Unit(Type, Owner)
 	 	  	break;
     }
 
-	this.Copy_Stats = function(Unit)
+	this.CopyStats = function(Unit)
 	{
 		this.dmg = Unit.dmg;
 		this.hp = Unit.hp;
@@ -137,7 +137,7 @@ function Unit(Type, Owner)
 		delete this.isRanged;
 	}
 
-	this.Take_Damage = function(damage)
+	this.TakeDamage = function(damage)
 	{
 		this.hp = this.hp - damage;
 		
@@ -149,7 +149,7 @@ function Unit(Type, Owner)
 	};
 
 
-	this.Apply_Buff = function(buff)
+	this.ApplyBuff = function(buff)
 	{
 		switch(buff.type)
 		{
