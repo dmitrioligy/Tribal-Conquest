@@ -207,19 +207,26 @@ function Game()
 
     // Currently player which can make moves/attacks
     this.NextTurn = function ()
-    {
+    {// updates the turn
+        //increment the players played
         ++this.playerList[this.playerList.playing].played;
+        // if the player has played twice
         if(this.playerList[this.playerList.playing].played >= 2)
         {
+            // reset the current players played, and set turn to false
             this.playerList[this.playerList.playing].played = 0;
             this.playerList[this.playerList.playing].turn = false;
+            //increment the playing player
             ++this.playerList.playing;
+            // if the last player finished his turn
             if(this.playerList.playing >= this.playerList.length)
             {
+                // reset the playing, and call all functions to be called after a round
                 this.playerList.playing = 0;
                 this.MiddleCheck();
                 this.TestWin();
             }
+            // set the playing players variables
             this.playerList[this.playerList.playing].turn = true;
             this.currentPlayer = this.playerList[this.playerList.playing];
         }
