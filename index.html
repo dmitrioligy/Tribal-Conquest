@@ -238,27 +238,11 @@
                 }
             );
 
-            // Sync player move/attack
             socket.on(
-                'sync_client_action',
-                function (message)
+                'winner_check',
+                function()
                 {
-                    // Simulating the clicks on other clients 
-                    render.SynchronizeTurn(message.oldX, message.oldY, message.newX, message.newY, message.owner);
-                }
-            );
-
-            // Perform next turn for client
-            socket.on(
-                'next_turn',
-                function ()
-                {
-                    // Increment Game Turn
-                    game.NextTurn();
-                    console.log("maxScore: " + game.maxScore );
-                    console.log("winners: " + game.winners );
-
-                    // Is there a someone in the winning container?
+                    // check if there is a winner
                     if(game.winners.length > 0)
                     {
                         console.log("SOMEONE WON");
@@ -266,7 +250,7 @@
                         $('#container').css('display', 'none');
 
                         // Is current client in winniers list?
-                        var hasWon;
+                        var hasWon = false;
                         for(var i = 0; i < game.winners.length; i++)
                         {
                             // Display win screen for client
@@ -284,6 +268,17 @@
                             $('#lost').css('display', 'block');
                         }
                     }
+                }
+            )
+
+            // Sync player move/attack
+            socket.on(
+                'sync_client_action',
+                function (message)
+                {
+
+                    // Simulating the clicks on other clients 
+                    render.SynchronizeTurn(message.oldX, message.oldY, message.newX, message.newY, message.owner);
                 }
             );
 

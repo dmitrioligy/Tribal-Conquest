@@ -184,6 +184,8 @@ io.sockets.on
                         newY: message.newY,
                         owner: message.owner
                     });
+
+                    client.emit('winner_check');
                 }
             }
         );
