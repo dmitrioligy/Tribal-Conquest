@@ -1,3 +1,7 @@
+/*
+ * Handles everything related to graphics and event handlers
+ */
+
 function Render(game, socket)
 {
     var board = game.table;
@@ -20,12 +24,13 @@ function Render(game, socket)
     var playerIndex;
     for(var z = 0; z < game.playerList.length; ++z)
     {
-        if(window.name == game.playerList[z].Name)
+        if(window.name == game.playerList[z].name)
         {
             playerIndex = z;
         }
     }
 
+    // Calculates the offset to necessary to present the same view point to different players
     var orientation;
     switch(game.playerList.length)
     {
@@ -60,6 +65,7 @@ function Render(game, socket)
     var layer = new Kinetic.Layer();
     var overlay = new Kinetic.Layer();
 
+    // Creates the graphical part of cell i in the pizza
     function makePizza(i)
     {
         return function (context)
@@ -75,6 +81,7 @@ function Render(game, socket)
         };
     }
 
+    // Creates the graphical component of cell (i, j)
     function makeCell(i, j)
     {
         return function (context)
@@ -102,8 +109,8 @@ function Render(game, socket)
         if(window.name == owner) return;
 
         // Deselecting the previously selected cell
-        if(game.lastClicked)
-            board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
+        if(game.lastPlayed)
+            board[game.lastPlayed[0]][game.lastPlayed[1]].visual.fire("click");
 
         // We want to override turn restrictions when the server is trying to move the units
         // for every single player
@@ -112,12 +119,13 @@ function Render(game, socket)
         game.table[newX][newY].visual.fire('click');
         serverSays = false;
 
-        if(window.name == game.playerList[0].Name && game.playerList[0].Turn)
+        // At the end of each round, the host generates a buff
+        if(window.name == game.playerList[0].name && game.playerList[0].Turn)
         {
             var newBuff = game.RandomBuff();
             socket.emit('synch_buff',
             {
-                buffName: newBuff[0],
+                buffname: newBuff[0],
                 buffX: newBuff[1],
                 buffY: newBuff[2]
             });
@@ -126,17 +134,17 @@ function Render(game, socket)
         recolorStrokes();
     }
 
-    this.synchronizeBuff = function (buffName, buffX, buffY)
+    this.synchronizeBuff = function (buffname, buffX, buffY)
     {
-        // save graphical info before board is changed
+        // Save graphical info before board is changed
         var temp = board[buffX][buffY].visual;
-        // add the buff to the game
-        game.AddBuff(buffName, buffX, buffY);
+        // Add the buff to the game
+        game.AddBuff(buffname, buffX, buffY);
 
-        // put the buff on the screen
-        // will change this (below) to a function &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        // Put the buff on the screen
+        // Will change this (below) to a function &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         var imageObj = new Image();
-        imageObj.src = images[buffName];
+        imageObj.src = images[buffname];
         var data = calcImageData(buffX, buffY);
         imageObj.onload = function ()
         {
@@ -159,10 +167,11 @@ function Render(game, socket)
             layer.add(unit);
             layer.draw();
         }
-        // will change this (above) to a function &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        // Will change this (above) to a function &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         board[buffX][buffY].visual = temp;
     }
 
+    // Goes over each cell and colors its border according to player index
     function recolorStrokes()
     {
         for(var i = 0; i < board.length; ++i)
@@ -171,9 +180,9 @@ function Render(game, socket)
             {
                 for(var z = 0; z < game.playerList.length; ++z)
                 {
-                    if(board[i][j].owner == game.playerList[z].Name)
+                    if(board[i][j].owner == game.playerList[z].name)
                     {
-                        board[i][j].visual.stroke(strokeColors[game.playerList[z].Index]);
+                        board[i][j].visual.stroke(strokeColors[game.playerList[z].index]);
                         board[i][j].visual.strokeWidth(2);
                         board[i][j].visual.moveToTop();
                         if(board[i][j].image) board[i][j].image.moveToTop();
@@ -253,11 +262,16 @@ function Render(game, socket)
     function drawTooltip(i, j)
     {
         tooltip.moveToTop();
-        tooltipText.text(
-            'Type: ' + board[i][j].type + '\n' +
-            'Damage: ' + board[i][j].dmg + '\n' +
-            'Health Points: ' + board[i][j].hp + '\n' +
-            'Owner: ' + board[i][j].owner
+        if(board[i][j].buff)
+            tooltipText.text(
+            'Type: '          + board[i][j].type
+        );
+        else 
+            tooltipText.text(
+            'Type: '          + board[i][j].type + '\n' +
+            'Damage: '        + board[i][j].dmg  + '\n' +
+            'Health Points: ' + board[i][j].hp   + '\n' +
+            'Owner: '         + board[i][j].owner
         );
         tooltipBack.height(tooltipText.height());
         tooltip.show();
@@ -279,7 +293,7 @@ function Render(game, socket)
             if(game.playerList[k].Turn)
             {
                 // update the now playing section
-                scoreBoardPlaying.text(scoreBoardPlayingTxt + game.playerList[k].Name);
+                scoreBoardPlaying.text(scoreBoardPlayingTxt + game.playerList[k].name);
                 scoreBoardPlaying.fill(strokeColors[k]);
             }
         }
@@ -327,7 +341,7 @@ function Render(game, socket)
         padding: 20,
         align: 'left',
     });
-    scoreBoardNames[0].text(game.playerList[0].Name);
+    scoreBoardNames[0].text(game.playerList[0].name);
     scoreBoardBackHeight += scoreBoardNames[0].height() / 2;
 
     // first sccore on the scoreBoard
@@ -359,7 +373,7 @@ function Render(game, socket)
             padding: 20,
             align: 'left',
         });
-        scoreBoardNames[k].text(game.playerList[k].Name);
+        scoreBoardNames[k].text(game.playerList[k].name);
         scoreBoardBackHeight += scoreBoardNames[k].height() / 2;
 
         // adds the score in the correct location
@@ -391,7 +405,7 @@ function Render(game, socket)
         padding: 20,
         align: 'center'
     });
-    scoreBoardPlaying.text(scoreBoardPlayingTxt + game.playerList[0].Name);
+    scoreBoardPlaying.text(scoreBoardPlayingTxt + game.playerList[0].name);
     scoreBoardBackHeight += scoreBoardPlaying.height() / 2;
 
     // the background of the scoreBoard
@@ -419,6 +433,7 @@ function Render(game, socket)
     // ------------lincolns code **************************************************************************
     //end   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
+    // Takes the place that was clicked on (object), and the unit that is selected (unitX, unitY)
     moveUnit = function (object, unitX, unitY)
     {
         var i = object.getAttr('myX'),
@@ -478,6 +493,7 @@ function Render(game, socket)
         }
     }
 
+    // Takes the place that was clicked on (object), and the unit that is selected (unitX, unitY)
     attackUnit = function (object, unitX, unitY)
     {
         var i = object.getAttr('myX'),
@@ -489,7 +505,7 @@ function Render(game, socket)
         // get info before board chagnes
         var attackRanged = board[unitX][unitY].isRanged;
         var attacker = board[unitX][unitY].owner;
-        var defenderName = board[i][j].owner;
+        var defendername = board[i][j].owner;
         var temp = board[i][j].visual;
 
         // tell the game to attack, if possible
@@ -499,7 +515,7 @@ function Render(game, socket)
             lastPlayed[0] = unitX;
             lastPlayed[1] = unitY;
             // test to see if the unit died
-            if(board[i][j].owner != defenderName)
+            if(board[i][j].owner != defendername)
             {
                 // move the image to the graveyard
                 var holder = board[unitX][unitY].image;
@@ -579,17 +595,20 @@ function Render(game, socket)
             j = this.getAttr('myY');
 
         // Deselecting the previously selected cell
-        if(game.lastClicked)
-            board[game.lastClicked[0]][game.lastClicked[1]].visual.fire("click");
+        if(game.lastPlayed)
+            board[game.lastPlayed[0]][game.lastPlayed[1]].visual.fire("click");
 
         // Highlighting the cell and adding the proper event handler to it
         board[i][j].visual.fill("#3399FF");
         board[i][j].visual.off('click');
         board[i][j].visual.on("click", clickOnHighlightedUnit);
-        if(serverSays || (
-            game.currentPlayer.Name == board[i][j].owner &&
-            window.name == game.currentPlayer.Name && !(lastPlayed[0] == i && lastPlayed[1] == j)
-        ))
+        if(serverSays || 
+            (
+                game.currentPlayer.name == board[i][j].owner &&
+                window.name == game.currentPlayer.name &&
+                !(lastPlayed[0] == i && lastPlayed[1] == j)
+            )
+          )
         {
             //Highlighting the cells which the unit can move to and attaching proper event handlers to them
             var canMove = game.MoveRange(i, j);
@@ -665,7 +684,7 @@ function Render(game, socket)
             }
         }
         drawTooltip(i, j);
-        game.lastClicked = [i, j];
+        game.lastPlayed = [i, j];
         stage.draw();
     }
 
@@ -712,7 +731,7 @@ function Render(game, socket)
         }
 
         tooltip.hide();
-        game.lastClicked = null;
+        game.lastPlayed = null;
         stage.draw();
     }
 
@@ -765,11 +784,11 @@ function Render(game, socket)
                 width: data.w,
                 height: data.h,
             });
-            unit.cache();
-            unit.filters([Kinetic.Filters.RGB]);
+            unit.cache(); // Images have to be cached if we are to put filters on them
+            // unit.filters([Kinetic.Filters.RGB]);
             board[i][j].visual.on("click", clickOnUnit);
             board[i][j].image = unit;
-            unit.setListening(false);
+            unit.setListening(false); // Click through
             layer.add(unit);
             imagesLoaded++;
 
@@ -784,6 +803,7 @@ function Render(game, socket)
         };
     }
 
+    // Generate the graphics of the pizza
     for(i = 0; i < 8; i++)
     {
         board[0][i].visual = new Kinetic.Shape(
@@ -797,6 +817,7 @@ function Render(game, socket)
         });
     }
 
+    // Generate the remaining cells
     for(i = 1; i < 8; i++)
     {
         for(j = 0; j < 24; j++)
@@ -810,7 +831,7 @@ function Render(game, socket)
                 myX: i,
                 myY: j,
             });
-            if(board[i][j].type != undefined)
+            if(board[i][j].type != undefined) // Meaning it's an image
             {
                 totalImages++;
                 fillImage(i, j, images[board[i][j].type]);
