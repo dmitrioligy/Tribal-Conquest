@@ -12,42 +12,46 @@ Game.prototype.Attack = function (attackX, attackY, defX, defY)
     var attacker = this.table[attackX][attackY];
     var defender = this.table[defX][defY];
     // if the attacker is playing, &&
-    // both units are not owned by the same person
+    // both units are not owned by the same person && the attacker is the one who is playing
     if (attacker.owner == this.playerList[this.playerList.playing].name &&
         attacker.owner != defender.owner)
     {
+        // do the damage
         this.table[defX][defY].TakeDamage(attacker.dmg);
-
+        // if the unit died
         if (this.table[defX][defY].dead == true)
         {
             // Place dead units type/ownership into dead container
             var deadUnit = new Unit(defender.type, defender.owner);
             deadUnit.dead = true;
             this.deadContainer.push(deadUnit);
-
+            // if the attack was ranged, empty the dead units cell
             if (attacker.isRanged)
             {
                 // Empty unit 
                 this.table[defX][defY].Empty();
             }
+            // otherwise move the unit to the cell
             else
             {
                 this.table[defX][defY].CopyStats(attacker);
                 this.table[attackX][attackY].Empty();
             }
         }
+        // update the turn
         this.NextTurn();
         return true;
     }
 };
 
 Game.prototype.Move = function (oldX, oldY, newX, newY)
-{
-    // Rename old and new cell. rename unit to be moved
+{// funciton takes in a units coordinates, and moves the unit to the new coordinates
+
+    // copy the units for ease of use
     var unitMoving = this.table[oldX][oldY];
     var newLoc = this.table[newX][newY];
 
-    // if newLoc is buff, apply buff
+    // if newLoc is a buff, apply the buff
     if (newLoc.buff == true)
     {
         unitMoving.ApplyBuff(newLoc);
@@ -64,7 +68,8 @@ Game.prototype.Move = function (oldX, oldY, newX, newY)
 
 // lincoln's code ------------------------------------------------------------------
 IntoPizza = function (oldColumn)
-{
+{   // input the current column, and the function returns the
+    // coresponding column that is inside the pizza
     if (oldColumn < 3)
     {
         return 0;
@@ -101,6 +106,8 @@ IntoPizza = function (oldColumn)
 
 ExitPizza = function (oldColumn)
 {
+    //input the current column that is inside the pizza
+    // and return the coresponding column that is directly behind it
     return (oldColumn * 3) + 1;
 };
 
@@ -110,6 +117,7 @@ Game.prototype.MoveRange = function (row, column)
     // returns array of arrays, the first parameter is the number of possible locations
     // the second paramater is the x (answer[][0] = x location)
     // and the second is the y (answer[][1] = y location)
+    // took a brute force approach since the for loops are not very big
     var answer = new Array(0);
     unit = (this.table[row][column]);
     var add = 0;
