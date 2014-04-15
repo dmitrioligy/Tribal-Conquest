@@ -66,8 +66,8 @@ function Game()
                 name: players[i],
                 score: 0,
                 index: i,
-                Turn: false,
-                Played: 0
+                turn: false,
+                played: 0
             };
         }
 
@@ -118,7 +118,7 @@ function Game()
     // Function to initialize units based on number of players
     this.InitializeUnits = function (rowStart, playerStart, player)
     {
-        var playerName = player.Name;
+        var playerName = player.name;
         // Column 1 (CCW)
         this.table[rowStart][playerStart] = new Unit("Scout", playerName);
         this.table[rowStart + 1][playerStart] = new Unit("Peasant", playerName);
@@ -317,16 +317,16 @@ function Game()
             {
             case undefined:
                 break;
-            case this.playerList[0].Name:
+            case this.playerList[0].name:
                 players[0].push(this.table[0][i]);
                 break;
-            case this.playerList[1].Name:
+            case this.playerList[1].name:
                 players[1].push(this.table[0][i]);
                 break;
-            case this.playerList[2].Name:
+            case this.playerList[2].name:
                 players[2].push(this.table[0][i]);
                 break;
-            case this.playerList[3].Name:
+            case this.playerList[3].name:
                 players[3].push(this.table[0][i]);
                 break;
             default:
