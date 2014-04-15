@@ -706,6 +706,8 @@ function Render(game, socket)
                 y = canMove[t][1];
             board[x][y].visual.fill((x + y) % 2 ? '#C4C4C4' : '#FFFFFF');
             board[x][y].visual.off('click');
+            if(board[x][y].type)
+                board[x][y].visual.on('click', ClickOnUnit);
         }
 
         // Deselecting the red cells and reverting their event handlers
