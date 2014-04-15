@@ -24,7 +24,8 @@
 
 <head>
     <style>
-        #searching_section {
+        #searching_section
+        {
             position: absolute;
             width: 300px;
             height: 200px;
@@ -35,11 +36,15 @@
             color: white;
             display: none;
         }
-        #disconnect {
+
+        #disconnect
+        {
             color: white;
             display: none;
         }
-        #win {
+
+        #win
+        {
             position: absolute;
             width: 300px;
             height: 200px;
@@ -50,7 +55,9 @@
             color: white;
             display: none;
         }
-        #lost {
+
+        #lost
+        {
             position: absolute;
             width: 300px;
             height: 200px;
@@ -61,21 +68,36 @@
             color: white;
             display: none;
         }
-        #status {
+
+        #status
+        {
             font-weight: bold;
         }
-        .background {
+
+        .background
+        {
             background-size: 100%;
             background-repeat: no-repeat;
             background-color: black;
         }
-        #container {
+
+        img.adjusted
+        {
+            position: absolute;
+            z-index: -1;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        #container
+        {
             position: fixed;
             width: 100%;
             height: 100%;
             left: 0;
             top: 0;
-            background: rgba(51, 51, 51, 0.4);
+            background: rgba(51, 51, 51, 0.55);
             display: none;
         }
     </style>
@@ -124,13 +146,14 @@
 
 
 <!-- Win and Lost Section -->
-<div id="win" class='background' background="victory.jpg">
+<div id="win">
+
     -= YOU HAVE WON! =- d-(^_^)-b
     <br>
     <br>
     <input TYPE="button" onClick="history.go(0)" VALUE="Refresh">
 </div>
-<div id="lost" class='background' background="defeat.jpg">
+<div id="lost">
     -= you have lost... =- q-(-_-)-p
     <br>
     <br>
@@ -258,6 +281,7 @@
                             if(game.winners[i] == window.name)
                             {
                                 $('#win').css('display', 'block');
+                                $('#background').css({'background' : 'url(victory.jpg) no-repeat fixed right'});
                                 hasWon = true;
                                 break;
                             }
@@ -266,6 +290,7 @@
                         // If not in winning list, display lose screen
                         if(hasWon == false)
                         {
+                            $('#background').css({'background' : 'url(defeat.jpg) no-repeat fixed right'});
                             $('#lost').css('display', 'block');
                         }
                     }
