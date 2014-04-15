@@ -289,7 +289,7 @@ function Render(game, socket)
         for(var k = 0; k < numOfPlayers; ++k)
         {
             // update each players score
-            scoreBoardScores[k].text(game.playerList[k].Score);
+            scoreBoardScores[k].text(game.playerList[k].score);
             if(game.playerList[k].Turn)
             {
                 // update the now playing section
