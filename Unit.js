@@ -26,9 +26,9 @@ function Unit(newType, newOwner)
 
    // Methods
        // Consturctor Unit(Type, Owner)
-       // Take_Damage(dmg)
-       // Apply_Buff(buff)
-       // Copy_Stats(Unit)
+       // TakeDamage(dmg)
+       // ApplyBuff(buff)
+       // CopyStats(Unit)
        // Empty       
 
    // Health Constants

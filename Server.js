@@ -8,14 +8,14 @@ var numOfPlayers = 0;
 var connected = 0;
 
 // Hosts choice of total # of players in game
-var host_players_size = 0;
-var host_max_score = 0;
+var hostPlayerSize = 0;
+var hostMaxScore = 0;
 
 // Game in session
-var game_active = false;
+var gameActive = false;
 
 // First player to join
-var host_options = false;
+var hostOptions = false;
 
 //array of player names
 var players = new Array(0);
@@ -65,17 +65,17 @@ io.sockets.on(
         function()
         {
           connected--;
-          console.log("GAME ACTIVE: " + game_active);
+          console.log("GAME ACTIVE: " + gameActive);
           console.log("Connected: " + connected);
 
           // Game active and someone left, restart everyones game
-          if (game_active == true)
+          if (gameActive == true)
           {
             // Restart Server Information
             numOfPlayers = 0;
             players.length = 0;
-            host_options = false;
-            game_active = false;
+            hostOptions = false;
+            gameActive = false;
 
             // Make players restart their page
             io.sockets.emit
@@ -86,19 +86,19 @@ io.sockets.on(
           
           if (connected < 1)
           {
-            host_options = false;
+            hostOptions = false;
           }
         }
     )
 
 
     // Welcome Message, host options to 1st person to connect
-    if (game_active == false)
+    if (gameActive == false)
     {
       client.emit
       (
         'welcome', {welcome: 'Welcome to Tribal Conquest',
-                     host_options: host_options}
+                     hostOptions: hostOptions}
       );
     }
 
@@ -108,7 +108,7 @@ io.sockets.on(
       'host_found',
       function()
       {
-          host_options = true;
+          hostOptions = true;
       }
     );
 
@@ -122,30 +122,30 @@ io.sockets.on(
         // This function extracts the player name from the find_game message, stores
         // it to the client object, sends a searching message to the client, and
         // starts the game if there are more than 1 players waiting
-        if (message && message.player_name) 
+        if (message && message.playerName) 
         {
           // Host declares number of players in game
           if (numOfPlayers == 0)
           {
-            host_players_size = message.num_players;
-            host_max_score = message.max_score;
+            hostPlayerSize = message.num_players;
+            hostMaxScore = message.maxScore;
           }
 
-          players[numOfPlayers] = message.player_name;
+          players[numOfPlayers] = message.playerName;
           numOfPlayers++;
-          client.set('player_name', message.player_name);
+          client.set('player_name', message.playerName);
           client.set('player_number', numOfPlayers);
           client.set('turn_number', 0);
           client.emit('searching','Searching for game...');
 
           // if Number of players matches host's game size => start game
-          if( (numOfPlayers == host_players_size) && (host_options == true) )
+          if( (numOfPlayers == hostPlayerSize) && (hostOptions == true) )
           {
 
             // Start the game
-            game_active = true;
+            gameActive = true;
       		  io.sockets.emit('start_game', {allPlayers : players, 
-                                            max_score: host_max_score});
+                                            maxScore: hostMaxScore});
           }
         }
 

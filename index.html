@@ -13,7 +13,7 @@
 <script src="Game.js"></script>
 <script src="Render.js"></script>
 <script src="Unit.js"></script>
-<script src="Move-Attack.js"></script>
+<script src="Move_Attack.js"></script>
 <script src="kinetic-v5.0.1.min.js"></script>
 <!-- IMAGE CITATION
     http://pictures.4ever.eu/tag/15605/warriors?pg=4
@@ -160,8 +160,8 @@
   // $(document).ready(fn) tells jQuery to call function 'fn' after the whole
   // document is loaded.
   var name = "";
-  var num_players = "";
-  var max_score = "";
+  var numPlayers = "";
+  var maxScore = "";
   $(document).ready(function() {
     // Hide the warning section and show the login section.
     $('#warning').css('display', 'none');
@@ -189,7 +189,7 @@
     		$('#find').attr('disabled', false);
             $('#disconnect').css('display', 'none');
 
-            if (message.host_options == false)
+            if (message.hostOptions == false)
             {
                 // Display host options, report to server that host is found
                 $('#host').css('display', 'block');
@@ -239,7 +239,7 @@
     		$('#searching_section').css('display', 'none');
             $('#container').css('display', 'block');
     		game = new Game();
-            Game.Max_Score = message.max_score;
+            Game.maxScore = message.maxScore;
     		game.Initialize(message.allPlayers);
     		render = new Render(game, socket);
 
@@ -263,7 +263,7 @@
     	function(message) 
     	{
     		// Simulating the clicks on other clients 
-           	render.synchronizeTurn(message.oldX, message.oldY, message.newX, message.newY, message.owner);
+           	render.SynchronizeTurn(message.oldX, message.oldY, message.newX, message.newY, message.owner);
     	}
     );
 
@@ -274,20 +274,20 @@
     	function()
     	{
             // Increment Game Turn
-    		game.Next_Turn();
+    		game.NextTurn();
 
             // Is there a someone in the winning container?
-            if (game.Winners.length > 0)
+            if (game.winners.length > 0)
             {
                 // Hide board
                 $('#container').css('display', 'none');
 
                 // Is current client in winniers list?
                 var has_won;
-                for(var i = 0; i < game.Winners.length; i++)
+                for(var i = 0; i < game.winners.length; i++)
                 {
                     // Display win screen for client
-                    if (game.Winners[i] == window.name)
+                    if (game.winners[i] == window.name)
                     {
                         $('#win').css('display', 'block');
                         has_won = true;
@@ -311,7 +311,7 @@
         if( message )
         {
           // send the new buff to everyone
-          render.synchronizeBuff(message.buffName, message.buffX, message.buffY);
+          render.SynchronizeBuff(message.buffName, message.buffX, message.buffY);
         }
       }
     );
@@ -322,18 +322,18 @@
     	function() 
 	    {
 	    	name = $('#name').val();
-            num_players = $('#num_players').val();
-            max_score = $('#max_score').val();
+            numPlayers = $('#num_players').val();
+            maxScore = $('#max_score').val();
 	    	if (name) 
 	    	{
 	    		name = name.trim();
-                num_players = num_players.trim();
-                max_score = max_score.trim();
+                numPlayers = numPlayers.trim();
+                maxScore = maxScore.trim();
 	    		if ( name.length > 0) 
 	    		{
-	    			socket.emit('find_game', { player_name: name,
-                                                num_players: num_players,
-                                                max_score: max_score } );
+	    			socket.emit('find_game', { playerName: name,
+                                                numPlayers: numPlayers,
+                                                maxScore: maxScore } );
 	    		}
 	    	}
 		      // Clear the input field.
