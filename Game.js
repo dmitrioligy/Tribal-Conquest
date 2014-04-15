@@ -8,30 +8,32 @@ function Game()
 {
 
     // Members
-       // this.dead_container
+       // this.deadContainer
        // this.table[x][y] is a array of array of Units - refer to Unit class
-       // this.Player_List - array of players
-       // this.Max_Score
-       // this.Current_Player
+       // this.playerList - array of players
+       // this.maxScore
+       // this.currentPlayer
 
     // Methods
-        // Test_Print()
-        // Add_Player(name)
-        // Add_Point(name)
-        // Player_Turn(player)
-        // Initialize(players)
+    	// Initialize(players)
+    	// InitializeUnits(row_start, player_start, player)
+        // AddPoint(name)
+        // TestPrint()    
+        // NextTurn() 
+        // TestWin()
+        // PlayerTimer()
         // RandomBuff()
-        // Middle_Check() - check middle to see who scores
-        // Reset_Used() - reset all units used to false
-
-
+        // AddBuff(buffName, buffX, buffY)
+        // TestPrint()
+        // MiddleCheck()
+        // ResetUsed()
 
     // Game Members decleration
-    this.Player_List = [];
-    this.Max_Score = 0;
-    Array.prototype.Turn = null;
-    this.dead_container = [];
-    this.Winners = new Array(0);
+    this.playerList = [];
+    this.maxScore = 0;
+    Array.prototype.playing = null;
+    this.deadContainer = [];
+    this.winners = new Array(0);
     
     // Constructor to create Array of Array's of Units
     // All units are set to null
@@ -60,35 +62,35 @@ function Game()
     {
     	for(var i = 0; i < players.length; i++)
     	{
-    		this.Player_List[i] = {Name: players[i], Score: 0, Index: i, Turn: false, Played: 0};
+    		this.playerList[i] = {name: players[i], score: 0, index: i, Turn: false, Played: 0};
     	}
 
     	// Define who begins first when game begins
-    	this.Player_List[0].Turn = true;
-    	this.Player_List.Playing = 0;
-    	this.Current_Player = this.Player_List[0];
+    	this.playerList[0].turn = true;
+    	this.playerList.Playing = 0;
+    	this.currentPlayer = this.playerList[0];
 
 
-    	var P1_Start, P2_Start, P3_Start, P4_Start;
+    	var p1Start, p2Start, p3Start, p4Start;
     	var Row_Start = 5;
         // Based on numbers of players create units
         switch(players.length)
         {
         	// Functional Prototype only has 2 players option
         	case 2: 
-				P1_Start = 7; 
-				P2_Start = 19;				
+				p1Start = 7; 
+				p2Start = 19;				
 				break;
 			case 3:
-				P1_Start = 3; 
-				P2_Start = 11;
-				P3_Start = 19;
+				p1Start = 3; 
+				p2Start = 11;
+				p3Start = 19;
 				break;
 			case 4:
-				P1_Start = 7; 
-				P2_Start = 13;
-				P3_Start = 19;
-				P4_Start = 1;
+				p1Start = 7; 
+				p2Start = 13;
+				p3Start = 19;
+				p4Start = 1;
 				break;
 			default:
 				// Do nothing
@@ -96,114 +98,141 @@ function Game()
 		}
  
 		// Initialize Units based on Start locations found in switch
-		this.Initialize_Units(Row_Start, P1_Start, this.Player_List[0]);
-		this.Initialize_Units(Row_Start, P2_Start, this.Player_List[1]);
+		this.InitializeUnits(Row_Start, p1Start, this.playerList[0]);
+		this.InitializeUnits(Row_Start, p2Start, this.playerList[1]);
 		if (players.length > 2)
 		{
-			this.Initialize_Units(Row_Start, P3_Start, this.Player_List[2]);
+			this.InitializeUnits(Row_Start, p3Start, this.playerList[2]);
 		}
 		if (players.length > 3)
 		{
-			this.Initialize_Units(Row_Start, P4_Start, this.Player_List[3]);
+			this.InitializeUnits(Row_Start, p4Start, this.playerList[3]);
    		}
    	};
 
+   	// Function to initialize units based on number of players
+	this.InitializeUnits = function(row_start, player_start, player)
+	{
+		var player_name = player.Name;
+		// Column 1 (CCW)
+		this.table[row_start][player_start] = new Unit("Scout", player_name);
+		this.table[row_start + 1][player_start] = new Unit("Peasant", player_name);
+		this.table[row_start + 2][player_start] = new Unit("Peasant", player_name);
+		
+		// Column 2
+		this.table[row_start][player_start -  1] = new Unit("Peasant", player_name);
+		this.table[row_start + 1][player_start - 1] = new Unit("Ranger", player_name);	
+		this.table[row_start + 2][player_start - 1] = new Unit("Ranger", player_name);	
+
+		// Column 3
+		// if table wraps around
+		if ( player.index == 3 )
+		{
+			player_start = 25;
+		}
+		this.table[row_start][player_start - 2] = new Unit("Peasant", player_name);
+		this.table[row_start + 1][player_start - 2] = new Unit("Ranger", player_name);
+		this.table[row_start + 2][player_start - 2] = new Unit("King", player_name);
+
+		// Column 4
+		this.table[row_start][player_start - 3] = new Unit("Scout", player_name);
+		this.table[row_start + 1][player_start - 3] = new Unit("Peasant", player_name);
+		this.table[row_start + 2][player_start - 3] = new Unit("Peasant", player_name);	
+	};
 
 	// Score one point to a player
-	this.Add_Point = function(player_name)
+	this.AddPoint = function(player_name)
 	{
 		// Find which player scored a point
 		switch(player_name)
 		{
-			case this.Player_List[0].Name:
+			case this.playerList[0].name:
 
 				// Increment Score
-				this.Player_List[0].Score = this.Player_List[0].Score + 1;
+				this.playerList[0].score = this.playerList[0].score + 1;
 
 				// If reached max points, game over
-				if (this.Player_List[0].Score == this.Max_Score)
+				if (this.playerList[0].score == this.maxScore)
 				{
-					this.Winners.push(this.Player_List[0].Name);
+					this.winners.push(this.playerList[0].name);
 				}
 				break;
 
-			case this.Player_List[1].Name:
+			case this.playerList[1].name:
 
 				// Increment Score
-				this.Player_List[1].Score = this.Player_List[1].Score + 1;
+				this.playerList[1].score = this.playerList[1].score + 1;
 				
 				// If reached max points, game over
-				if (this.Player_List[1].Score == this.Max_Score)
+				if (this.playerList[1].score == this.maxScore)
 				{
-					this.Winners.push(this.Player_List[1].Name);
+					this.winners.push(this.playerList[1].name);
 				}
 				break;
-			case this.Player_List[2].Name:
+			case this.playerList[2].name:
 
 				// Increment Score
-				this.Player_List[2].Score = this.Player_List[2].Score + 1;
+				this.playerList[2].score = this.playerList[2].score + 1;
 			
 				// If reached max points, game over
-				if (this.Player_List[2].Score == this.Max_Score)
+				if (this.playerList[2].score == this.maxScore)
 				{
-					this.Winners.push(this.Player_List[2].Name);
+					this.winners.push(this.playerList[2].name);
 				}
 				break;
 
-			case this.Player_List[3].Name:
+			case this.playerList[3].name:
 
 				// Increment Score
-				this.Player_List[3].Score = this.Player_List[3].Score + 1;
+				this.playerList[3].score = this.playerList[3].score + 1;
 
 				// If reached max points, game over
-				if (this.Player_List[3].Score == this.Max_Score)
+				if (this.playerList[3].score == this.maxScore)
 				{
-					this.Winners.push(this.Player_List[3].Name);
+					this.winners.push(this.playerList[3].name);
 				}
 				break;
 
 			default:
 				 break;
 		}
-
 	};
 
-
 	// Currently player which can make moves/attacks
-	this.Next_Turn = function()
+	this.NextTurn = function()
 	{
-		++this.Player_List[this.Player_List.Playing].Played;
-		if( this.Player_List[this.Player_List.Playing].Played >= 2 )
+		++this.playerList[this.playerList.Playing].Played;
+		if( this.playerList[this.playerList.Playing].Played >= 2 )
 		{
-			this.Player_List[this.Player_List.Playing].Played = 0;
-			this.Player_List[this.Player_List.Playing].Turn = false;
-			++this.Player_List.Playing;
-			if( this.Player_List.Playing >= this.Player_List.length )
+			this.playerList[this.playerList.Playing].Played = 0;
+			this.playerList[this.playerList.Playing].turn = false;
+			++this.playerList.Playing;
+			if( this.playerList.Playing >= this.playerList.length )
 			{
-				this.Player_List.Playing = 0;
-				this.Middle_Check();
+				this.playerList.Playing = 0;
+				this.MiddleCheck();
 				this.Test_Win();
 			}
-			this.Player_List[this.Player_List.Playing].Turn = true;
-			this.Current_Player = this.Player_List[this.Player_List.Playing];
+			this.playerList[this.playerList.Playing].turn = true;
+			this.currentPlayer = this.playerList[this.playerList.Playing];
 		}
 	};
 
 	// test to see who won, and end the game
-	this.Test_Win = function()
+	this.TestWin = function()
 	{
-		for(var i=0; i<this.Player_List.length; i++)
+		for(var i=0; i<this.playerList.length; i++)
 		{
-			if(this.Player_List[i].Score >= this.Max_Score)
+			if(this.playerList[i].score >= this.maxScore)
 			{
-				console.log(this.Max_Score);
-				this.Winners[this.Winners.length] = this.Player_List[i].Name;
+				console.log(this.maxScore);
+				this.winners[this.winners.length] = this.playerList[i].name;
 			}
 		}
-	}
+	};
 
 	// The amount of time a player has for their turn
-	this.Player_Timer = function()
+	this.PlayerTimer = function()
 	{
 		var count = 10;
 		var timer = setInterval(function() 
@@ -211,7 +240,7 @@ function Game()
 			$("#counter").html(count--);
 			if(count == 1) clearInterval(timer);
 		} , 1000);
-	}
+	};
 
 	// Generates a random buff on the table
 	this.RandomBuff = function()
@@ -241,7 +270,7 @@ function Game()
     };
 
     // actually adds the buff to the game
-    this.Add_Buff = function(buffName, buffX, buffY)
+    this.AddBuff = function(buffName, buffX, buffY)
     {
     	if(!this.table[buffX][buffY].type)
     	{
@@ -250,7 +279,7 @@ function Game()
     };
 
     // Prints the table as a text to see stats
-    this.Test_Print = function ()
+    this.TestPrint = function ()
     {
     	var result = "<table border=1>";
     	for(var i=0; i < this.table.length; i++)
@@ -268,9 +297,9 @@ function Game()
     };
 
     // Check Score in middle
-    this.Middle_Check = function()
+    this.MiddleCheck = function()
     {
-    	var players = new Array(this.Player_List.length);
+    	var players = new Array(this.playerList.length);
     	for(var i = 0; i < players.length; i++)
     	{
     		players[i] = new Array(0);
@@ -283,16 +312,16 @@ function Game()
 			{
 				case undefined:
 					break;
-				case this.Player_List[0].Name:
+				case this.playerList[0].Name:
 					players[0].push(this.table[0][i]);
 					break;
-				case this.Player_List[1].Name:
+				case this.playerList[1].Name:
 					players[1].push(this.table[0][i]);
 					break;
-				case this.Player_List[2].Name:
+				case this.playerList[2].Name:
 					players[2].push(this.table[0][i]);
 					break;
-				case this.Player_List[3].Name:
+				case this.playerList[3].Name:
 					players[3].push(this.table[0][i]);
 					break;
 				default:
@@ -300,31 +329,30 @@ function Game()
 			}
     	}
 
-    	var max_player_names = new Array(0);
-    	var max_units = 0;
+    	var maxPlayerNames = new Array(0);
+    	var maxUnits = 0;
     	for ( var i = 0; i < players.length; i++)
     	{
     		// ***************** FIX ***********************
     		// Needs to allow for score to be added if players tie in # of units
-    		if (max_units < players[i].length)
+    		if (maxUnits < players[i].length)
     		{
-    			max_player_names = new Array(1);
-    			max_player_names[0] = players[i][0].owner;
-    			max_units = players[i].length;
+    			maxPlayerNames = new Array(1);
+    			maxPlayerNames[0] = players[i][0].owner;
+    			maxUnits = players[i].length;
     		}
-    		else if (max_units == players[i].length && max_units > 0)
+    		else if (maxUnits == players[i].length && maxUnits > 0)
     		{
-    			max_player_names[1] = players[i][0].owner;
+    			maxPlayerNames[1] = players[i][0].owner;
     		}
     	}
-    	for(var i=0; i<max_player_names.length; i++)
+    	for(var i=0; i<maxPlayerNames.length; i++)
     	{
-    		this.Add_Point(max_player_names[i]);
+    		this.AddPoint(maxPlayerNames[i]);
     	}
-
     };   
 
-    this.Reset_Used = function()
+    this.ResetUsed = function()
     {
     	for(var i = 0; i < this.table.length; i++)
     	{
@@ -338,32 +366,4 @@ function Game()
 
 }
 
-// Function to initialize units based on number of players
-Game.prototype.Initialize_Units = function(row_start, player_start, player)
-{
-	var player_name = player.Name;
-	// Column 1 (CCW)
-	this.table[row_start][player_start] = new Unit("Scout", player_name);
-	this.table[row_start + 1][player_start] = new Unit("Peasant", player_name);
-	this.table[row_start + 2][player_start] = new Unit("Peasant", player_name);
-	
-	// Column 2
-	this.table[row_start][player_start -  1] = new Unit("Peasant", player_name);
-	this.table[row_start + 1][player_start - 1] = new Unit("Ranger", player_name);	
-	this.table[row_start + 2][player_start - 1] = new Unit("Ranger", player_name);	
 
-	// Column 3
-	// if table wraps around
-	if ( player.Index == 3 )
-	{
-		player_start = 25;
-	}
-	this.table[row_start][player_start - 2] = new Unit("Peasant", player_name);
-	this.table[row_start + 1][player_start - 2] = new Unit("Ranger", player_name);
-	this.table[row_start + 2][player_start - 2] = new Unit("King", player_name);
-
-	// Column 4
-	this.table[row_start][player_start - 3] = new Unit("Scout", player_name);
-	this.table[row_start + 1][player_start - 3] = new Unit("Peasant", player_name);
-	this.table[row_start + 2][player_start - 3] = new Unit("Peasant", player_name);	
-}
