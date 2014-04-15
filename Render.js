@@ -349,6 +349,7 @@ function Render(game, socket)
                 board[i][j].image.setPosition({x: data.x, y: data.y});
                 board[i][j].image.setSize({width: data.w, height: data.h});
                 board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
+                board[i][j].image.cache();
                 board[i][j].visual.on('click', clickOnUnit);
 
                 if( !serverSays )
@@ -409,6 +410,7 @@ function Render(game, socket)
                         board[i][j].image.setPosition({x: data.x, y: data.y});
                         board[i][j].image.setSize({width: data.w, height: data.h});
                         board[i][j].image.setOffset({x: data.w/2, y: data.h/2});
+                        board[i][j].image.cache();
                         board[i][j].visual = temp;
                         board[i][j].visual.off('click');
                         board[i][j].visual.on('click', clickOnUnit);
@@ -602,6 +604,8 @@ function Render(game, socket)
                     width: data.w,
                     height: data.h,
                 });
+                unit.cache();
+                unit.filters([Kinetic.Filters.RGB]);
                 board[i][j].visual.on("click", clickOnUnit);
                 board[i][j].image = unit;
                 unit.setListening(false);
