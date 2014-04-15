@@ -102,15 +102,8 @@
 
         <br>
         <br>Max Score to Win:
-        <br>
-        <form action="">
-        <input id="max_score" name='score' type="radio" value="1" />1 Points
+        <input id="max_score" type="number" min="1" max="50" />
             <br>
-        <input id="max_score" name='score' type="radio" value="15" />15 Points
-            <br>
-        <input id="max_score" name='score' type="radio" value="15" />20 Points
-            <br>
-        </form>
     </div>
 
     <br>
@@ -153,8 +146,8 @@
     // $(document).ready(fn) tells jQuery to call function 'fn' after the whole
     // document is loaded.
     var name = "";
-    var numPlayers = "";
-    var maxScore = "";
+    var numPlayers = 0;
+    var maxScore = 0;
 
     $(document).ready(
         function ()
@@ -228,7 +221,7 @@
                     $('#searching_section').css('display', 'none');
                     $('#container').css('display', 'block');
                     game = new Game();
-                    Game.maxScore = message.maxScore;
+                    game.maxScore = message.maxScore;
                     game.Initialize(message.allPlayers);
                     render = new Render(game, socket);
 
@@ -260,6 +253,8 @@
                 {
                     // Increment Game Turn
                     game.NextTurn();
+                    console.log("maxScore: " + game.maxScore );
+                    console.log("winners: " + game.winners );
 
                     // Is there a someone in the winning container?
                     if(game.winners.length > 0)

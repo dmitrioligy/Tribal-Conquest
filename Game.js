@@ -174,6 +174,7 @@ function Game()
                 this.winners.push(this.playerList[1].name);
             }
             break;
+
         case this.playerList[2].name:
 
             // Increment Score
@@ -196,6 +197,7 @@ function Game()
             {
                 this.winners.push(this.playerList[3].name);
             }
+
             break;
 
         default:
