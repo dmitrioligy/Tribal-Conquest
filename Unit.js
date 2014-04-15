@@ -36,6 +36,7 @@ function Unit(newType, newOwner)
 
     // Create a Unit
     this.type = newType;
+    this.buffList = new Array();
 
     if(newType != null)
     {
@@ -117,6 +118,7 @@ function Unit(newType, newOwner)
         this.owner = newUnit.owner;
         this.type = newUnit.type;
         this.isRanged = newUnit.isRanged;
+        this.buffList = newUnit.buffList;
     };
 
     // Make the unit null
@@ -175,5 +177,6 @@ function Unit(newType, newOwner)
             this.hp = this.hp * 2;
             break;
         }
+        this.buffList.push(buff.type);
     };
 }

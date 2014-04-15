@@ -263,16 +263,27 @@ function Render(game, socket)
     {
         tooltip.moveToTop();
         if(board[i][j].buff)
+        {
             tooltipText.text(
-            'Type: '          + board[i][j].type
-        );
+                'Type: ' + board[i][j].type
+            );
+        }
         else 
+        {
+            var buffString = "";
+            for(var z = 0; z < board[i][j].buffList.length; ++z)
+            {
+                buffString += board[i][j].buffList[z] + ', ';
+            }
             tooltipText.text(
-            'Type: '          + board[i][j].type + '\n' +
-            'Damage: '        + board[i][j].dmg  + '\n' +
-            'Health Points: ' + board[i][j].hp   + '\n' +
-            'Owner: '         + board[i][j].owner
-        );
+                'Type: '          + board[i][j].type  + '\n' +
+                'Damage: '        + board[i][j].dmg   + '\n' +
+                'Health Points: ' + board[i][j].hp    + '\n' +
+                'Owner: '         + board[i][j].owner + 
+                (buffString == "" ? "" :
+                ('\n' + 'Buffs Gained: '  + buffString.slice(0, -2)))
+            );
+        }
         tooltipBack.height(tooltipText.height());
         tooltip.show();
         overlay.draw();
