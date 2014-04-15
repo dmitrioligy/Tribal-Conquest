@@ -85,8 +85,8 @@ function Game()
 				break;
 			case 4:
 				P1_Start = 7; 
-				P2_Start = 19;
-				P3_Start = 13;
+				P2_Start = 13;
+				P3_Start = 19;
 				P4_Start = 1;
 				break;
 			default:
