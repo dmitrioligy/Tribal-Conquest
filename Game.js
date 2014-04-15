@@ -31,6 +31,7 @@ function Game()
     this.Max_Score = 0;
     Array.prototype.Turn = null;
     this.dead_container = [];
+    this.Winners = new Array(0);
     
     // Constructor to create Array of Array's of Units
     // All units are set to null
@@ -115,90 +116,23 @@ function Game()
 		switch(player_name)
 		{
 			case this.Player_List[0].Name:
-
-				// Increment Score
-				this.Player_List[0].Score = this.Player_List[0].Score + 1;
-
-				// If reached max points, game over
-				if (this.Player_List[0].Score == this.Max_Score)
-				{
-					// if my name == winner, display win screen
-					if (window.name == this.Player_List[0].Name)
-					{
-						Render.Win(window.name);
-					}
-					// if my name != winner, display lose screen
-					else
-					{
-						Render.Lose(window.name);
-					}
-				}
-				break;
-
+				 // Increment Score
+				 this.Player_List[0].Score = this.Player_List[0].Score + 1;
+				 break;
 			case this.Player_List[1].Name:
-
-				// Increment Score
-				this.Player_List[1].Score = this.Player_List[1].Score + 1;
-				
-				// If reached max points, game over
-				if (this.Player_List[1].Score == this.Max_Score)
-				{
-					// if my name == winner, display win screen
-					if (window.name == this.Player_List[1].Name)
-					{
-						Render.Win(window.name);
-					}
-					// if my name != winner, display lose screen
-					else
-					{
-						Render.Lose(window.name);
-					}
-				}
-				break;
+				 // Increment Score
+				 this.Player_List[1].Score = this.Player_List[1].Score + 1;
+				 break;
 			case this.Player_List[2].Name:
-
-				// Increment Score
-				this.Player_List[2].Score = this.Player_List[2].Score + 1;
-			
-				// If reached max points, game over
-				if (this.Player_List[2].Score == this.Max_Score)
-				{
-					// if my name == winner, display win screen
-					if (window.name == this.Player_List[2].Name)
-					{
-						Render.Win(window.name);
-					}
-					// if my name != winner, display lose screen
-					else
-					{
-						Render.Lose(window.name);
-					}
-				}
-				break;
-
+				 // Increment Score
+				 this.Player_List[2].Score = this.Player_List[2].Score + 1;
+				 break;
 			case this.Player_List[3].Name:
-
-				// Increment Score
-				this.Player_List[3].Score = this.Player_List[3].Score + 1;
-
-				// If reached max points, game over
-				if (this.Player_List[3].Score == this.Max_Score)
-				{
-					// if my name == winner, display win screen
-					if (window.name == this.Player_List[3].Name)
-					{
-						Render.Win(window.name);
-					}
-					// if my name != winner, display lose screen
-					else
-					{
-						Render.Lose(window.name);
-					}
-				}
-				break;
-
+				 // Increment Score
+				 this.Player_List[3].Score = this.Player_List[3].Score + 1;
+				 break;
 			default:
-				break;
+				 break;
 		}
 
 	};
@@ -217,11 +151,25 @@ function Game()
 			{
 				this.Player_List.Playing = 0;
 				this.Middle_Check();
+				this.Test_Win();
 			}
 			this.Player_List[this.Player_List.Playing].Turn = true;
 			this.Current_Player = this.Player_List[this.Player_List.Playing];
 		}
 	};
+
+	// test to see who won, and end the game
+	this.Test_Win = function()
+	{
+		for(var i=0; i<this.Player_List.length; i++)
+		{
+			if(this.Player_List[i].Score >= this.Max_Score)
+			{
+				console.log(this.Max_Score);
+				this.Winners[this.Winners.length] = this.Player_List[i].Name;
+			}
+		}
+	}
 
 	// The amount of time a player has for their turn
 	this.Player_Timer = function()
@@ -238,32 +186,36 @@ function Game()
 	this.RandomBuff = function()
 	{
     	// Randomize buff to be generated
-    	var buffs = ["Damage", "Health", "Speed", "Rez"];
-    	var buff_indx = Math.floor(Math.random()*4);
-
-    	var repeat = false;
+    	var buffs = ["Damage", "Health", "Speed"]; //need to add rez
+    	var buff_indx = Math.floor(Math.random()*buffs.length);
 
     	// Buff will spawn randomly within range of row 1-4
-    	do
+    	while(true)
     	{
     		// randomiz a location
-    		var x = Math.floor(Math.random()*4 + 1);
+    		var x = Math.floor(Math.random()*buffs.length + 1);
     		var y = Math.floor(Math.random()*24);
 
     		// if location is empty place buff
-    		if (this.table[x][y] != null)
+    		if (this.table[x][y].type == null || this.table[x][y] == undefined)
     		{
-    			this.table[x][y] = new Unit( buffs[buff_indx] );
-    			repeat = false;
+    			//this.Add_Buff( buffs[buff_indx], x, y );
+    			var end = new Array(0);
+    			end[0] = buffs[buff_indx];
+    			end[1] = x;
+    			end[2] = y;
+    			return end;
     		}
+    	}
+    };
 
-    		// not empty, try new coordinates
-    		else
-    		{	
-    			repeat =  true;
-    		}
-
-    	} while(repeat == true)
+    // actually adds the buff to the game
+    this.Add_Buff = function(buffName, buffX, buffY)
+    {
+    	if(!this.table[buffX][buffY].type)
+    	{
+    		this.table[buffX][buffY] = new Unit(buffName);
+    	}
     };
 
     // Prints the table as a text to see stats
