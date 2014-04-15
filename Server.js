@@ -63,7 +63,7 @@ io.sockets.on(
           console.log("Disconnect");
           connected--;
 
-          if ( (numOfPlayers > connected) || (connected <= 1) )
+          if ( (numOfPlayers > connected) || (connected < 1) )
           {
             // Restart Server Information
             numOfPlayers = 0;
