@@ -125,7 +125,7 @@ function Render(game, socket)
             var newBuff = game.RandomBuff();
             socket.emit('synch_buff',
             {
-                buffname: newBuff[0],
+                buffName: newBuff[0],
                 buffX: newBuff[1],
                 buffY: newBuff[2]
             });
@@ -134,17 +134,17 @@ function Render(game, socket)
         RecolorStrokes();
     }
 
-    this.SynchronizeBuff = function (buffname, buffX, buffY)
+    this.SynchronizeBuff = function (buffName, buffX, buffY)
     {
         // Save graphical info before board is changed
         var temp = board[buffX][buffY].visual;
         // Add the buff to the game
-        game.AddBuff(buffname, buffX, buffY);
+        game.AddBuff(buffName, buffX, buffY);
 
         // Put the buff on the screen
         // Will change this (below) to a function &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         var imageObj = new Image();
-        imageObj.src = images[buffname];
+        imageObj.src = images[buffName];
         var data = CalculateImageData(buffX, buffY);
         imageObj.onload = function ()
         {
