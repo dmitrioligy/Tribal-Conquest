@@ -61,6 +61,7 @@ io.sockets.on
     function (client)
     {
 
+    	// Count number of people connected
         connected++;
         console.log("Connected: " + connected);
 
@@ -185,6 +186,7 @@ io.sockets.on
                         owner: message.owner
                     });
 
+                    // Check for winner
                     client.emit('winner_check');
                 }
             }

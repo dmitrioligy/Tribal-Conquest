@@ -228,6 +228,7 @@ function Game()
     // test to see who won, and end the game
     this.TestWin = function ()
     {
+        // If a player has a score >= maxScore, add them to winner list
         for(var i = 0; i < this.playerList.length; i++)
         {
             if(this.playerList[i].score >= this.maxScore)
@@ -238,6 +239,7 @@ function Game()
     };
 
     // The amount of time a player has for their turn
+    // TO BE IMPLEMENTED MAYBE....
     this.PlayerTimer = function ()
     {
         var count = 10;
@@ -358,6 +360,7 @@ function Game()
 
     this.ResetUsed = function ()
     {
+        // Reset the 
         for(var i = 0; i < this.table.length; i++)
         {
             for(var j = 0; j < this.table[i].length; j++)
