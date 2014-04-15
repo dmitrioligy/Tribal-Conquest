@@ -120,7 +120,7 @@ function Render(game, socket)
         serverSays = false;
 
         // At the end of each round, the host generates a buff
-        if(window.name == game.playerList[0].name && game.playerList[0].Turn)
+        if(window.name == game.playerList[0].name && game.playerList[0].turn)
         {
             var newBuff = game.RandomBuff();
             socket.emit('synch_buff',
@@ -290,7 +290,7 @@ function Render(game, socket)
         {
             // update each players score
             scoreBoardScores[k].text(game.playerList[k].score);
-            if(game.playerList[k].Turn)
+            if(game.playerList[k].turn)
             {
                 // update the now playing section
                 scoreBoardPlaying.text(scoreBoardPlayingTxt + game.playerList[k].name);
@@ -505,7 +505,7 @@ function Render(game, socket)
         // get info before board chagnes
         var attackRanged = board[unitX][unitY].isRanged;
         var attacker = board[unitX][unitY].owner;
-        var defendername = board[i][j].owner;
+        var defenderName = board[i][j].owner;
         var temp = board[i][j].visual;
 
         // tell the game to attack, if possible
@@ -515,7 +515,7 @@ function Render(game, socket)
             lastPlayed[0] = unitX;
             lastPlayed[1] = unitY;
             // test to see if the unit died
-            if(board[i][j].owner != defendername)
+            if(board[i][j].owner != defenderName)
             {
                 // move the image to the graveyard
                 var holder = board[unitX][unitY].image;
