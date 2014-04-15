@@ -107,9 +107,6 @@ function Render(game, socket)
             height: height
         });
 
-        game.unitsPlayed = 0;
-        game.overrideTurns = false;
-
         function resizeThings() 
         {
             var width2 = window.innerWidth || document.body.clientWidth;
