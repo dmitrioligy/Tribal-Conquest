@@ -6,22 +6,27 @@
 function Unit(newType, newOwner)
 {
     // Members
-    // 3 Types of units
-    // Unit Person
-    // this.type
-    // this.owner
-    // this.dmg
-    // this.hp
-    // this.movePlus
-    // this.moveX
-    // this.attackPlus
-    // this.attackX
-    // this.buff = false
-    // this.dead bool
-    // Unit Buff
-    // this.buff = true
-    // Unit null
-    // this.type = null
+        // 3 Types of units
+        // Unit Person
+            // this.type
+            // this.owner
+            // this.dmg
+            // this.hp
+            // this.movePlus
+            // this.moveX
+            // this.attackPlus
+            // this.attackX
+            // this.buff = false
+            // this.dead bool
+        // Unit Buff
+            // this.buff = true
+        // Unit null
+            // this.type = null
+    // Methods
+        // CopyStats(newUnit)
+        // Empty()
+        // TakeDamage(damage)
+        // ApplyBuff(buff)
 
     // Health Constants
     var peasantHP = 2;
@@ -38,6 +43,7 @@ function Unit(newType, newOwner)
         this.dead = false;
         this.used = false;
     }
+
     // set up the unit based on the type
     switch(newType)
     {
@@ -111,7 +117,7 @@ function Unit(newType, newOwner)
         this.owner = newUnit.owner;
         this.type = newUnit.type;
         this.isRanged = newUnit.isRanged;
-    }
+    };
 
     // Make the unit null
     this.Empty = function ()
@@ -128,7 +134,7 @@ function Unit(newType, newOwner)
         delete this.owner;
         delete this.image.used;
         delete this.isRanged;
-    }
+    };
 
     // function for being attacked
     this.TakeDamage = function (damage)
