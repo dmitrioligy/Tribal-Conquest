@@ -101,6 +101,21 @@
             display: none;
         }
     </style>
+
+    <script>
+    // To preload victory and defeat background images (usually they took too long to load)
+    // Basically I put them in a hidden HTML element, so they get cached by the browser
+	    function preload(arrayOfImages)
+	    {
+		    $(arrayOfImages).each(function() {
+		        $('<img/>')[0].src = this;
+	    	});
+		}
+
+    	$(window).load(function() {
+    		preload(['defeat.jpg','victory.jpg']);
+    	});
+    </script>
 </head>
 
 <!-- Warning Section -->
@@ -281,7 +296,8 @@
                             if(game.winners[i] == window.name)
                             {
                                 $('#win').css('display', 'block');
-                                $('#background').css({'background' : 'url(victory.jpg) no-repeat fixed right'});
+                                $('#background').css({'background' : 'url(victory.jpg) no-repeat fixed center',
+                            						  'background-size' : 'cover'});
                                 hasWon = true;
                                 break;
                             }
@@ -290,7 +306,8 @@
                         // If not in winning list, display lose screen
                         if(hasWon == false)
                         {
-                            $('#background').css({'background' : 'url(defeat.jpg) no-repeat fixed right'});
+                            $('#background').css({'background' : 'url(defeat.jpg) no-repeat fixed right',
+                            					  'background-size' : 'cover'});
                             $('#lost').css('display', 'block');
                         }
                     }
